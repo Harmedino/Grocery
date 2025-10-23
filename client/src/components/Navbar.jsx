@@ -119,7 +119,7 @@ const Navbar = () => {
           </NavLink>
           {user && (
             <NavLink
-              to={"/orders"}
+              to={"/my-orders"}
               onClick={() => setOpen(false)}
               className="block"
             >
