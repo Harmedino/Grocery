@@ -70,4 +70,47 @@ export const Register = async (req, res) => {
 
 // Login user 
 
+export const Login = async (req, res) => {
+    try {
+        const {email, password} = req.body
 
+        if(!email || !password){
+            return res.json({success:false, message: 'Email and password required'})
+        }
+        const user = await User.findOne({email})
+        if(!user){
+            return res.json({success:false, message:"Invalid email or password"})
+        }
+
+        const isMatch = await bcrypt.compare(password, user.password)
+        if(!isMatch){
+            return res.json({success:false, message:"Invalid email or password"})
+        }
+         // 6️⃣ Create a JWT token for authentication
+    const token = jwt.sign(
+      { id: user._id },          // payload
+      process.env.JWT_SECRET,       // secret key from .env
+      { expiresIn: "7d" }           // token expires in 7 days
+    );
+
+    // 7️⃣ Store the JWT token inside a secure HTTP-only cookie
+    res.cookie("token", token, {
+      httpOnly: true,                                    // prevents client-side JS access
+      secure: process.env.NODE_ENV === "production",      // only use HTTPS in production
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "strict", // handle cross-site cookie policy
+      maxAge: 7 * 24 * 60 * 60 * 1000,                   // 7 days in milliseconds
+    });
+     return res.json({
+      success: true,
+      user: {
+        email: user.email,
+        name: user.name,
+        cartItems: user.cartItems, 
+      },
+    });
+
+    } catch (error) {
+        console.error("Register Error:", error);
+    res.json({ success: false, message: error.message });
+    }
+}
