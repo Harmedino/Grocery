@@ -14,17 +14,17 @@ import AddAddress from "./pages/AddAddress";
 import MyOrders from "./pages/MyOrders";
 import SellerLogin from "./components/seller/SellerLogin";
 import SellerLayout from "./pages/seller/SellerLayout";
-import { AddProduct } from "./pages/seller/AddProduct";
 import ProductList from "./pages/seller/ProductList";
-import { Order } from "./pages/seller/Order";
+import Order from "./pages/seller/Order";
+import AddProduct from "./pages/seller/AddProduct";
 
 const App = () => {
   const isSellerPath = useLocation().pathname.includes("seller");
-  const {showUserLogin, isSeller}  = useAppContext();
+  const { showUserLogin, isSeller } = useAppContext();
   return (
     <div className="text-default min-h-screen text-gray-700 bg-white">
       {isSellerPath ? null : <Navbar></Navbar>}
-      {showUserLogin ? <Login/> : null}
+      {showUserLogin ? <Login /> : null}
       <Toaster />
       <div
         className={`${isSellerPath ? "" : "px-6 md:px-16 lg:px-24 xl:px-32"} `}
@@ -34,21 +34,26 @@ const App = () => {
           <Route path="/products" element={<AllProduct />}></Route>
           <Route path="/cart" element={<Cart />}></Route>
           <Route path="/add-address" element={<AddAddress />}></Route>
-          <Route path="/products/:category/:id" element={<ProductDetails />}></Route>
-          <Route path="/products/:category" element={<ProductCategory />}></Route>
+          <Route
+            path="/products/:category/:id"
+            element={<ProductDetails />}
+          ></Route>
+          <Route
+            path="/products/:category"
+            element={<ProductCategory />}
+          ></Route>
           <Route path="/my-orders" element={<MyOrders />}></Route>
-                  <Route path="/seller" element={isSeller ? <SellerLayout /> : <SellerLogin />}>
-  <Route index element={ isSeller ? <AddProduct /> : null} />
-  <Route path="product-list" element={<ProductList />} />
-  <Route path="orders" element={<Order />} />
-</Route>
-
-
-
-        
+          <Route
+            path="/seller"
+            element={isSeller ? <SellerLayout /> : <SellerLogin />}
+          >
+            <Route index element={isSeller ? <AddProduct /> : null} />
+            <Route path="product-list" element={<ProductList />} />
+            <Route path="orders" element={<Order />} />
+          </Route>
         </Routes>
       </div>
-{    !isSellerPath &&  <Footer/>}
+      {!isSellerPath && <Footer />}
     </div>
   );
 };
