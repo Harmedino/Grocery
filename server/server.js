@@ -1,37 +1,34 @@
-import express from 'express';
-import cors from 'cors';
-import cookieParser from 'cookie-parser';
-import connectDB from './configs/db.js';
-import 'dotenv/config'
-import userRouter from './routes/user.js';
-import sellerRoute from './routes/sellerRoute.js';
-import { connectCloudinary } from './configs/cloudinary.js';
-import productRouter from './routes/productRoute.js';
+import express from "express";
+import cors from "cors";
+import cookieParser from "cookie-parser";
+import connectDB from "./configs/db.js";
+import "dotenv/config";
+import userRouter from "./routes/user.js";
+import sellerRoute from "./routes/sellerRoute.js";
+import { connectCloudinary } from "./configs/cloudinary.js";
+import productRouter from "./routes/productRoute.js";
+import cartRouter from "./routes/cartRoute.js";
 
 const app = express();
 const PORT = process.env.PORT || 4000;
 
-await connectDB()
-await connectCloudinary()
+await connectDB();
+await connectCloudinary();
 
-
-const allOrigins = ['http://localhost:5173', ]
+const allOrigins = ["http://localhost:5173"];
 
 app.use(express.json());
 app.use(cookieParser());
-app.use(cors({origin: allOrigins, credentials: true}));
+app.use(cors({ origin: allOrigins, credentials: true }));
 
-app.get('/', (req, res) => {
-  res.send('Hello from the server!');
+app.get("/", (req, res) => {
+  res.send("Hello from the server!");
 });
-app.use('/api/user', userRouter)
-app.use('/api/seller', sellerRoute)
-app.use('/api/product', productRouter)
+app.use("/api/user", userRouter);
+app.use("/api/seller", sellerRoute);
+app.use("/api/product", productRouter);
+app.use("/api/cart", cartRouter);
 
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
-
-
-
-
