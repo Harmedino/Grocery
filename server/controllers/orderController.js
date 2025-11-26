@@ -2,7 +2,6 @@
 
 import Order from "../models/order.js";
 import Product from "../models/product.js";
-import { productList } from "./productController";
 
 export const placeOrderCod = async (req, res) => {
   try {
@@ -70,7 +69,7 @@ export const getUserOrders = async (req, res) => {
   }
 };
 
-import Order from "../models/order.js";
+
 
 export const getAllOrders = async (req, res) => {
   try {

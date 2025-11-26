@@ -1,10 +1,10 @@
-import mongoose from "mongoose";
+import express from "express";
 import authUser from "../middleware/authUser.js";
 import { updateCart } from "../controllers/cartController.js";
 
+const cartRouter = express.Router(); // ✅ Express Router, not Mongoose
 
-const cartRouter = mongoose.Router();
+// Route to update cart
+cartRouter.post("/update", authUser, updateCart);
 
-cartRouter.post('/update', authUser, updateCart)
-
-export  default cartRouter
+export default cartRouter;

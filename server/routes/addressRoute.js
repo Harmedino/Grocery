@@ -1,8 +1,8 @@
 
 import express from 'express'
-import { addAddress } from '../controllers/addressController.jss'
+import { addAddress } from '../controllers/addressController.js'
 import authUser from '../middleware/authUser.js'
-import { getAddress } from '../controllers/addressController'
+import { getAddress } from '../controllers/addressController.js'
 
 const addressRouter = express.Router()
 
