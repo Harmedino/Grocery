@@ -9,40 +9,39 @@ const productSchema = new mongoose.Schema(
     },
 
     description: {
-      type: Array,
+      type: [String], // array of strings
       required: true,
-      trim: true,
     },
-     price: {
+
+    price: {
       type: Number,
       required: true,
     },
 
-     offerPrice: {
+    offerPrice: {
       type: Number,
       required: true,
     },
 
     images: {
-      type: Array, 
+      type: [String], // array of image URLs
       default: [],
     },
 
-   category: {
+    category: {
       type: String,
       required: true,
       trim: true,
     },
-     inStock: {
+
+    inStock: {
       type: Boolean,
-      required: true,
       default: true,
     },
-    
   },
   { timestamps: true }
 );
 
-const Product = mongoose.model("Product", productSchema) || mongoose.models.product;
+const Product = mongoose.models.Product || mongoose.model("Product", productSchema);
 
 export default Product;
