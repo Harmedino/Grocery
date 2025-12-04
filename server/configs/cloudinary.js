@@ -14,10 +14,15 @@ cloudinary.config({
 
 // Upload function
 export const connectCloudinary = async (filePath, folderName = "uploads") => {
+  if (!filePath) {
+    console.error("Cloudinary Upload Error: No file path provided");
+    return { success: false, error: "No file path provided" };
+  }
+
   try {
     const result = await cloudinary.uploader.upload(filePath, {
       folder: folderName,
-      resource_type: "auto", // auto-detect image/video/raw
+      resource_type: "auto",
     });
 
     return {
@@ -30,3 +35,4 @@ export const connectCloudinary = async (filePath, folderName = "uploads") => {
     return { success: false, error: error.message };
   }
 };
+

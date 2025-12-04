@@ -6,9 +6,11 @@ import authSeller from "../middleware/authSeller.js";
 
 const productRouter = express.Router();
 
-productRouter.post("/add", upload.array(["images"]), addProduct, isSellerAuth);
-productRouter.get('/list', productList)
-productRouter.get('/id', productById)
-productRouter.post('/stock', authSeller, changeStock)
+// Corrected middleware order and array usage
+productRouter.post("/add", authSeller, upload.array("images", 5), addProduct);
 
-export default productRouter
+productRouter.get("/list", productList);
+productRouter.get("/id", productById);
+productRouter.post("/stock", authSeller, changeStock);
+
+export default productRouter;
