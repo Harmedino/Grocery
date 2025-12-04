@@ -3,42 +3,36 @@ import Product from '../models/product.js';
 
 
 
-// ADD PRODUCT CONTROLLER
 export const addProduct = async (req, res) => {
   try {
-    // req.body.productData comes as a JSON string (because files + fields are sent using FormData)
-    // So we must parse it back into a normal JS object
     let productData = JSON.parse(req.body.productData);
+    console.log("Parsed product data:", productData);
 
-    // req.files contains all uploaded images (handled by multer)
     const images = req.files;
+    console.log("Uploaded files:", images);
 
-    // Upload each image to Cloudinary and collect the secure URLs
     let imageUrls = await Promise.all(
       images.map(async (item) => {
-        // Upload to Cloudinary (auto-detects file type)
-        let result = await cloudinary.uploader.upload(item.path, {
-          resource_type: "image",
-        });
-
-        // Return the Cloudinary hosted image URL
+        let result = await cloudinary.uploader.upload(item.path, { resource_type: "image" });
+        console.log("Uploaded image result:", result);
         return result.secure_url;
       })
     );
+    console.log("All uploaded image URLs:", imageUrls);
 
-    // Save product to DB with uploaded Cloudinary images
-    await Product.create({
-      ...productData, // spread user product fields (name, price, etc.)
-      image: imageUrls, // attach array of image URLs
+    const product = new Product({
+      ...productData,
+      image: imageUrls,
     });
+    console.log("Saving product to DB:", product);
 
-    // Send success response
+    await product.save();
+    console.log("Product saved successfully");
+
     return res.json({ success: true, message: "Product added" });
   } catch (error) {
-    console.log(error);
-    return res
-      .status(500)
-      .json({ success: false, message: "Failed to add product" });
+    console.error("Error in addProduct:", error);
+    return res.status(500).json({ success: false, message: "Failed to add product" });
   }
 };
 
