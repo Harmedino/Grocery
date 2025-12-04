@@ -12,7 +12,7 @@ export const addProduct = async (req, res) => {
     if (!req.files || req.files.length === 0) {
       return res.status(400).json({ success: false, message: "No images uploaded" });
     }
-
+  
     // Upload all images to Cloudinary
     const imageUrls = await Promise.all(
       req.files.map(async (file) => {
@@ -21,14 +21,12 @@ export const addProduct = async (req, res) => {
         return result.url;
       })
     );
-
-    // Save product to database
-    const product = new Product({
+      console.log(imageUrls)
+  const product = await Product.create({
       ...productData,
-      image: imageUrls,
+      images: imageUrls,
     });
 
-    await product.save();
 
     return res.json({ success: true, message: "Product added", product });
   } catch (error) {
