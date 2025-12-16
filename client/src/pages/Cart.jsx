@@ -66,7 +66,7 @@ const Cart = () => {
               }} className="cursor-pointer w-24 h-24 flex items-center justify-center border border-gray-300 rounded overflow-hidden">
                 <img
                   className="max-w-full h-full object-cover"
-                  src={product.image[0]}
+                  src={product.images[0]}
                   alt={product.name}
                 />
               </div>

@@ -2,11 +2,12 @@ import React, { useEffect } from "react";
 import { Navigate, NavLink } from "react-router-dom";
 import { assets } from "../assets/assets";
 import { useAppContext } from "../contex/AppContex";
+import toast from "react-hot-toast";
 
 const Navbar = () => {
   const [open, setOpen] = React.useState(false);
 
-  const { user, setUser, setShowUserLogin, navigate,  setSearchQuery, searchQuery, getCartCount } = useAppContext();
+  const { user,axios, setUser, setShowUserLogin, navigate,  setSearchQuery, searchQuery, getCartCount } = useAppContext();
 
   useEffect(() => {
     if(searchQuery.length >0){
@@ -14,8 +15,18 @@ const Navbar = () => {
     }
   }, [searchQuery]);
   const logout = async () => {
-    setUser(null);
-    navigate("/");
+    try {
+      const {data}= await axios.get('api/user/logout')
+      if(data.success){
+        toast.success(data.message)
+        setUser(null);
+        navigate("/");
+      }else{
+          toast.error(data.message)
+      }
+    } catch (error) {
+      toast.error(error.message)
+    }
   };
   return (
     <nav className="flex items-center justify-between px-6 md:px-16 lg:px-24 xl:px-32 py-4 border-b border-gray-300 bg-white relative transition-all">

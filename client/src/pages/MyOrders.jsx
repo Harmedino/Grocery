@@ -54,7 +54,7 @@ const MyOrders = () => {
                 <div className="col-span-2 flex justify-center">
                   <div className="bg-primary/10 p-4 rounded-lg">
                     <img
-                      src={item.product.image[0]}
+                      src={item.product.images[0]}
                       alt={item.product.name}
                       className="w-16 h-16 object-contain"
                     />
