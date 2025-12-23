@@ -40,7 +40,9 @@ try {
       const {data}  = await axios.get('api/user/is-auth')
       if(data.success){
         setUser(data.user)
+        
         setCartItems(data.user.cartItems)
+        console.log(cartItems)
       }
     } catch (error) {
       setUser(null)
@@ -52,6 +54,7 @@ try {
      const {data} = await axios.get('/api/product/list')
      if(data.success){
       setProducts(data.products)
+      console.log(data)
      }else{
       toast.error(data.message)
      }
@@ -63,12 +66,13 @@ try {
   const addToCart = (itemId) => {
     let cartData = structuredClone(cartItems);
 
+    
+
     if (cartData[itemId]) {
       cartData[itemId] += 1;
     } else {
       cartData[itemId] = 1;
     }
-
     setCartItems(cartData);
     toast.success("Item added to cart");
   };
@@ -111,6 +115,31 @@ try {
     return Math.floor(totalAmount * 100)/ 100
   }
 
+  useEffect(() => {
+    fetchProducts();
+    fetchSeller();
+    fetchUser()
+  }, []);
+  useEffect(() => {
+    const updateCart = async () => {
+      const payload = {
+        userId: user._id,  
+        cartItems           
+      };
+      try {
+        const {data}= await axios.post('/api/cart/update', {payload})
+        if(!data.success){
+          toast.error(data.message)
+        }
+      } catch (error) {
+          toast.error(error.message)
+      }
+    }
+    console.log(user)
+    if(user){
+      updateCart()
+    }
+  }, [cartItems]);
   useEffect(() => {
     fetchProducts();
     fetchSeller();

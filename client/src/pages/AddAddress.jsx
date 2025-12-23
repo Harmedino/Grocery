@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
 import { assets } from '../assets/assets';
+import { useAppContext } from '../contex/AppContex';
+import toast from 'react-hot-toast';
+import { useEffect } from 'react';
 
 // ✅ Reusable Input Field Component
 const InputField = ({ type, placeholder, name, handleChange, address }) => (
@@ -16,6 +19,7 @@ const InputField = ({ type, placeholder, name, handleChange, address }) => (
 
 // ✅ Main AddAddress Component
 const AddAddress = () => {
+  const {axios, navigate, user} = useAppContext()
   const [address, setAddress] = useState({
     firstName: '',
     lastName: '',
@@ -36,11 +40,27 @@ const AddAddress = () => {
     }));
   };
 
-  const onSubmitHandler = (e) => {
+  const onSubmitHandler = async (e) => {
     e.preventDefault();
-    // 🚀 Logic to add address goes here
-    console.log('Address submitted:', address);
+   try {
+    const payload = { address, userId:user._id}
+    const {data} = await axios.post('/api/address/add', payload)
+    if(data.success){
+      toast.success(data.message)
+      navigate('/cart')
+    }else{
+      toast.error(data.message)
+    }
+   } catch (error) {
+    toast.error(error.message)
+   }
   };
+
+  useEffect(()=>{
+    if(!user){
+      navigate('/cart')
+    }
+  },[])
 
   return (
     <div className="mt-16 pb-16">

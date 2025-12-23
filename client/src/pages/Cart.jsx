@@ -23,6 +23,7 @@ const Cart = () => {
 
    const getCart = ()=>{
     let tempArray = [];
+    console.log(products)
     for (const key in cartItems){
         const product = products.find((item)=> item._id === key);
         product.quantity = cartItems[key]
