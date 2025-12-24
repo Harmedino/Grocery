@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useAppContext } from "../contex/AppContex";
 import { assets, dummyAddress } from "../assets/assets";
+import toast from "react-hot-toast";
 
 const Cart = () => {
  
 
   const {
+    axios,
     products,
     currency,
     cartItems,
@@ -13,17 +15,18 @@ const Cart = () => {
     getCartCount,
     updateCartItems,
     navigate,
+    user,
     getCartTotalAmount,
+    setCartItems
   } = useAppContext();
   const [cartArray, setCartArray]= useState([])
-  const [address, setAddress]= useState(dummyAddress)
+  const [address, setAddress]= useState([])
    const [showAddress, setShowAddress] = useState(false);
-   const [selectedAddress, setSelectedAddress] = useState(dummyAddress[0]);
+   const [selectedAddress, setSelectedAddress] = useState(null);
    const [paymentOption, setPaymentOption] = useState("COD");
 
    const getCart = ()=>{
     let tempArray = [];
-    console.log(products)
     for (const key in cartItems){
         const product = products.find((item)=> item._id === key);
         product.quantity = cartItems[key]
@@ -38,9 +41,58 @@ const Cart = () => {
     }
    }, [cartItems, products])
 
-   const  placeOrder  = async ()=>{
-    //logic to place order
-   }
+  const getUserAddress  = async ()=>{
+    try {
+      const {data}= await axios.get('/api/address/get')
+      if(data.success){
+        setAddress(data.addressses)
+        if(data.addressses.length > 0){
+          setSelectedAddress(data.addressses[0])
+        }
+      }else{
+        toast.error(data.message)
+      }
+    } catch (error) {
+       toast.error(error.message)
+    }
+  }
+
+   const placeOrder = async () => {
+  try {
+    if (!selectedAddress) {
+      toast.error("Please select an address");
+      return;
+    }
+
+    if (paymentOption === "COD") {
+      const { data } = await axios.post("/api/order/cod", {
+        // ❌ DO NOT send userId (use auth middleware)
+        address: selectedAddress._id,
+        items: cartArray.map((item) => ({
+          product: item._id,
+          quantity: item.quantity,
+        })),
+      });
+
+      if (data.success) {
+        toast.success(data.message);
+        setCartItems({});
+        navigate("/my-orders");
+      } else {
+        toast.error(data.message);
+      }
+    }
+  } catch (error) {
+    toast.error(error.message);
+  }
+};
+
+
+   useEffect(()=>{
+if(user){
+  getUserAddress()
+}
+   },[user])
 
   return (
     products.length > 0 && cartItems ?(

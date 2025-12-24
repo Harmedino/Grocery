@@ -5,7 +5,8 @@ import Product from "../models/product.js";
 
 export const placeOrderCod = async (req, res) => {
   try {
-    const { userId, items, address } = req.body;
+    const userId = req.body
+    const {  items, address } = req.body;
 
     if (!userId || !items || items.length === 0 || !address) {
       return res.status(400).json({ message: "Missing required fields" });

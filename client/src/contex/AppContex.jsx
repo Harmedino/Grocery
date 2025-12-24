@@ -122,12 +122,10 @@ try {
   }, []);
   useEffect(() => {
     const updateCart = async () => {
-      const payload = {
-        userId: user._id,  
-        cartItems           
-      };
+       
+      
       try {
-        const {data}= await axios.post('/api/cart/update', {payload})
+        const {data}= await axios.post('/api/cart/update', {cartItems})
         if(!data.success){
           toast.error(data.message)
         }
@@ -165,7 +163,8 @@ try {
     searchQuery,
     getCartCount,
     getCartTotalAmount,
-    axios
+    axios,
+    setCartItems
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
