@@ -42,7 +42,6 @@ try {
         setUser(data.user)
         
         setCartItems(data.user.cartItems)
-        console.log(cartItems)
       }
     } catch (error) {
       setUser(null)
@@ -54,7 +53,6 @@ try {
      const {data} = await axios.get('/api/product/list')
      if(data.success){
       setProducts(data.products)
-      console.log(data)
      }else{
       toast.error(data.message)
      }
@@ -133,7 +131,6 @@ try {
           toast.error(error.message)
       }
     }
-    console.log(user)
     if(user){
       updateCart()
     }

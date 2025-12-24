@@ -66,7 +66,7 @@ const Cart = () => {
 
     if (paymentOption === "COD") {
       const { data } = await axios.post("/api/order/cod", {
-        // ❌ DO NOT send userId (use auth middleware)
+       userId: user._id,
         address: selectedAddress._id,
         items: cartArray.map((item) => ({
           product: item._id,
@@ -222,7 +222,7 @@ if(user){
           </p>
         </div>
 
-        <button onClick={placeOrder()} className="w-full py-3 mt-6 cursor-pointer bg-primary text-white font-medium hover:bg-indigo-600 transition">
+        <button onClick={placeOrder} className="w-full py-3 mt-6 cursor-pointer bg-primary text-white font-medium hover:bg-indigo-600 transition">
           {paymentOption === "COD" ? "Place Order" : "Proceed to Pay"}
         </button>
       </div>
