@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useAppContext } from "../contex/AppContex";
-import { assets, dummyAddress } from "../assets/assets";
+import { assets} from "../assets/assets";
 import toast from "react-hot-toast";
 
 const Cart = () => {
@@ -78,6 +78,21 @@ const Cart = () => {
         toast.success(data.message);
         setCartItems({});
         navigate("/my-orders");
+      } else {
+        toast.error(data.message);
+      }
+    }else{
+      const {data}= await await axios.post("/api/order/stripe", {
+       userId: user._id,
+        address: selectedAddress._id,
+        items: cartArray.map((item) => ({
+          product: item._id,
+          quantity: item.quantity,
+        })),
+      });
+
+      if (data.success) {
+        window.location.replace(data.url)
       } else {
         toast.error(data.message);
       }
@@ -175,7 +190,7 @@ if(user){
             </button>
             {showAddress && (
               <div className="absolute top-12 py-1 bg-white border border-gray-300 text-sm w-full">
-              { address.map((address, index)=>(
+              { address.map((address)=>(
                 <p
                   onClick={() => {  setSelectedAddress(address); setShowAddress(false);}}
                   className="text-gray-500 p-2 hover:bg-gray-100"
@@ -222,7 +237,7 @@ if(user){
           </p>
         </div>
 
-        <button onClick={placeOrder} className="w-full py-3 mt-6 cursor-pointer bg-primary text-white font-medium hover:bg-indigo-600 transition">
+        <button onClick={placeOrder} className="w-full py-3 mt-6 cursor-pointer bg-primary text-white font-medium hover:bg-primary/10 transition">
           {paymentOption === "COD" ? "Place Order" : "Proceed to Pay"}
         </button>
       </div>
