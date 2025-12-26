@@ -3,6 +3,7 @@
 import Order from "../models/order.js";
 import Product from "../models/product.js";
 import stripe from "stripe"
+import User from"../models/user.js"
 
 export const placeOrderCod = async (req, res) => {
   try {
@@ -171,5 +172,63 @@ export const placeOrderStripe = async (req, res) => {
     res.status(500).json({ message: "Server error", error: error.message });
   }
 };
+// stripe webbook to verify payment
+
+export const stripeWebhooks = async (req,res)=>{
+  const stripeInstance = new stripe(process.env.STRIPE_SECRET_KEY)
+
+  const sig = req.headers["stripe-signature"];
+  let event;
+
+  try {
+    event = stripeInstance.webhooks.constructEvent(
+      req.body,
+      sig,
+      process.env.STRIPE_WEBHOOK_SECRET
+    )
+  } catch (error) {
+    res.status(400).send(`webhook Error: ${error.message}`)
+  }
+
+  // handle event
+
+  switch (event.type) {
+    case "pament_intent.succeeded":{
+      const paymentIntent = event.data.object;
+      const pamentIntendId = paymentIntent.id
+      // gettingg session metadate
+
+      const session = await stripeInstance.checkout.sessions.list({
+        payment_Intent: paymentIntentId
+      });
+
+      const { orderId, userId} = session.data[0].metadata;
+      await Order.finsByIdAndUpdate(orderid, {isPaid:true})
+
+      // clear user data
+
+      await User.findByIdAndUpdate(usserId, {cartItems:{}};)
+    }
+      
+      break;
+       case "pament_intent.failed":{
+const paymentIntent = event.data.object;
+      const pamentIntendId = paymentIntent.id
+      // gettingg session metadate
+
+      const session = await stripeInstance.checkout.sessions.list({
+        payment_Intent: paymentIntentId
+      });
+
+      const { orderId, userId} = session.data[0].metadata;
+       await Order.finsByIdAndDelete(orderId)
+       }
+  
+    default:
+      console.error('event.type')
+      break;
+  }
+  res.json({received:true})
+}
 
 
