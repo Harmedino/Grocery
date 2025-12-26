@@ -18,7 +18,7 @@ const PORT = process.env.PORT || 4000;
 await connectDB();
 
 
-const allOrigins = ["http://localhost:5173"];
+const allOrigins = ["http://localhost:5173", 'https://grocery-rho-five.vercel.app'];
 
 app.post('/stripe', express.raw({type: 'application/json'}), stripeWebhooks)
 
