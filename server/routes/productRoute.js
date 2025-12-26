@@ -1,13 +1,18 @@
 import express from "express";
-import { upload } from "../configs/multer.js";
 import { isSellerAuth } from "../controllers/sellerController.js";
 import { addProduct, changeStock, productById, productList } from "../controllers/productController.js";
 import authSeller from "../middleware/authSeller.js";
 
 const productRouter = express.Router();
 
-// Corrected middleware order and array usage
-productRouter.post("/add", authSeller, upload.array("images", 5), addProduct);
+// Only import multer when the /add route is called
+productRouter.post("/add", authSeller, async (req, res, next) => {
+  const { upload } = await import("../configs/multer.js"); // dynamic import
+  upload.array("images", 5)(req, res, async (err) => {
+    if (err) return next(err);
+    await addProduct(req, res, next);
+  });
+});
 
 productRouter.get("/list", productList);
 productRouter.get("/id", productById);
