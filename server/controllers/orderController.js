@@ -174,8 +174,8 @@ export const placeOrderStripe = async (req, res) => {
 };
 // stripe webbook to verify payment
 
-export const stripeWebhooks = async (req,res)=>{
-  const stripeInstance = new stripe(process.env.STRIPE_SECRET_KEY)
+export const stripeWebhooks = async (req, res) => {
+  const stripeInstance = new stripe(process.env.STRIPE_SECRET_KEY);
 
   const sig = req.headers["stripe-signature"];
   let event;
@@ -185,50 +185,52 @@ export const stripeWebhooks = async (req,res)=>{
       req.body,
       sig,
       process.env.STRIPE_WEBHOOK_SECRET
-    )
+    );
   } catch (error) {
-    res.status(400).send(`webhook Error: ${error.message}`)
+    res.status(400).send(`webhook Error: ${error.message}`);
   }
 
   // handle event
 
   switch (event.type) {
-    case "pament_intent.succeeded":{
+    case "payment_intent.succeeded": {
       const paymentIntent = event.data.object;
-      const pamentIntendId = paymentIntent.id
-      // gettingg session metadate
+      const paymentIntentId = paymentIntent.id;
+      // getting session metadata
 
       const session = await stripeInstance.checkout.sessions.list({
-        payment_Intent: paymentIntentId
+        payment_intent: paymentIntentId,
       });
 
-      const { orderId, userId} = session.data[0].metadata;
-      await Order.finsByIdAndUpdate(orderid, {isPaid:true})
+      const { orderId, userId } = session.data[0].metadata;
+      await Order.findByIdAndUpdate(orderId, { isPaid: true });
 
       // clear user data
-
-      await User.findByIdAndUpdate(usserId, {cartItems:{}};)
+      await User.findByIdAndUpdate(userId, { cartItems: {} });
     }
-      
+
       break;
-       case "pament_intent.failed":{
-const paymentIntent = event.data.object;
-      const pamentIntendId = paymentIntent.id
-      // gettingg session metadate
+
+    case "payment_intent.failed": {
+      const paymentIntent = event.data.object;
+      const paymentIntentId = paymentIntent.id;
+      // getting session metadata
 
       const session = await stripeInstance.checkout.sessions.list({
-        payment_Intent: paymentIntentId
+        payment_intent: paymentIntentId,
       });
 
-      const { orderId, userId} = session.data[0].metadata;
-       await Order.finsByIdAndDelete(orderId)
-       }
-  
+      const { orderId } = session.data[0].metadata;
+      await Order.findByIdAndDelete(orderId);
+    }
+
     default:
-      console.error('event.type')
+      console.error("event.type");
       break;
   }
-  res.json({received:true})
-}
+
+  res.json({ received: true });
+};
+
 
 
