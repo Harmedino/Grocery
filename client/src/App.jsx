@@ -12,6 +12,7 @@ import ProductDetails from "./pages/ProductDetails";
 import Cart from "./pages/Cart";
 import AddAddress from "./pages/AddAddress";
 import MyOrders from "./pages/MyOrders";
+import Contact from "./pages/Contact";
 import SellerLogin from "./components/seller/SellerLogin";
 import SellerLayout from "./pages/seller/SellerLayout";
 import ProductList from "./pages/seller/ProductList";
@@ -33,6 +34,7 @@ const App = () => {
         <Routes>
           <Route path="/" element={<Home />}></Route>
           <Route path="/products" element={<AllProduct />}></Route>
+          <Route path="/contact" element={<Contact />}></Route>
           <Route path="/cart" element={<Cart />}></Route>
           <Route path="/add-address" element={<AddAddress />}></Route>
           <Route
