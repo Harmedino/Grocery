@@ -16,7 +16,8 @@ import { stripeWebhooks } from "./controllers/orderController.js";
 const app = express();
 const PORT = process.env.PORT || 4000;
 
-const allOrigins = ["http://localhost:5173", 'https://grocery-rho-five.vercel.app'];
+const rawOrigins = process.env.CLIENT_ORIGINS || "http://localhost:5173,https://grocery-rho-five.vercel.app";
+const allOrigins = rawOrigins.split(",").map(s => s.trim());
 
 (async () => {
   try {
@@ -30,7 +31,26 @@ const allOrigins = ["http://localhost:5173", 'https://grocery-rho-five.vercel.ap
 
   app.use(express.json());
   app.use(cookieParser());
-  app.use(cors({ origin: allOrigins, credentials: true }));
+
+  // Configure CORS: if CLIENT_ORIGINS contains '*' allow all origins
+  if (allOrigins.includes("*")) {
+    app.use(cors({ origin: true, credentials: true }));
+  } else {
+    app.use(
+      cors({
+        origin: function (origin, callback) {
+          // allow requests with no origin like mobile apps or curl
+          if (!origin) return callback(null, true);
+          if (allOrigins.indexOf(origin) !== -1) {
+            callback(null, true);
+          } else {
+            callback(new Error("CORS policy: This origin is not allowed."));
+          }
+        },
+        credentials: true,
+      })
+    );
+  }
 
   app.get("/", (req, res) => {
     res.send("Hello from the server!");
