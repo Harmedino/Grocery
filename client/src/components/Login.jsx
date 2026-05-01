@@ -31,40 +31,59 @@ const Login = () => {
       }
     }
 
-    return (
-        <div onClick={()=> setShowUserLogin(false)} className="fixed w-full top-0 bottom-0 right-0 z-30 flex items-center text-sm text-grey-600 bg-black/50 ">
-        <form onSubmit={onSubmitHandler} onClick={(e)=> e.stopPropagation()} className="flex flex-col gap-4 m-auto items-start p-8 py-12 w-80 sm:w-[352px] text-gray-500 rounded-lg shadow-xl border border-gray-200 bg-white">
-            <p className="text-2xl font-medium m-auto">
-                <span className="text-primary">User</span> {state === "login" ? "Login" : "Sign Up"}
-            </p>
-            {state === "register" && (
-                <div className="w-full">
-                    <p>Name</p>
-                    <input onChange={(e) => setName(e.target.value)} value={name} placeholder="type here" className="border border-gray-200 rounded w-full p-2 mt-1 outline-primary" type="text" required />
+        return (
+                <div onClick={()=> setShowUserLogin(false)} className="fixed inset-0 z-40 flex items-center justify-center bg-black/50 p-4">
+                    <div onClick={(e)=> e.stopPropagation()} className="relative w-full max-w-md bg-white rounded-2xl shadow-2xl overflow-hidden">
+                        <div className="absolute -top-16 left-1/2 -translate-x-1/2">
+                            <div className="w-32 h-32 bg-gradient-to-tr from-emerald-400 to-green-600 rounded-full flex items-center justify-center shadow-xl animate-rotate-slow">
+                                <img src="/src/assets/profile_icon.png" alt="logo" className="w-20 h-20" />
+                            </div>
+                        </div>
+
+                        <form onSubmit={onSubmitHandler} className="pt-20 px-8 pb-8 flex flex-col gap-4 text-gray-700">
+                            <h2 className="text-2xl font-semibold text-center">
+                                <span className="text-emerald-600">User</span> {state === "login" ? "Login" : "Sign Up"}
+                            </h2>
+
+                            {state === "register" && (
+                                <div className="w-full">
+                                    <label className="text-sm text-gray-500">Name</label>
+                                    <input onChange={(e) => setName(e.target.value)} value={name} placeholder="Your full name" className="mt-1 border border-gray-200 rounded w-full p-3 focus:outline-none focus:ring-2 focus:ring-emerald-300" type="text" required />
+                                </div>
+                            )}
+
+                            <div className="w-full">
+                                <label className="text-sm text-gray-500">Email</label>
+                                <input onChange={(e) => setEmail(e.target.value)} value={email} placeholder="you@example.com" className="mt-1 border border-gray-200 rounded w-full p-3 focus:outline-none focus:ring-2 focus:ring-emerald-300" type="email" required />
+                            </div>
+
+                            <div className="w-full">
+                                <label className="text-sm text-gray-500">Password</label>
+                                <input onChange={(e) => setPassword(e.target.value)} value={password} placeholder="••••••••" className="mt-1 border border-gray-200 rounded w-full p-3 focus:outline-none focus:ring-2 focus:ring-emerald-300" type="password" required />
+                            </div>
+
+                            <div className="flex justify-between items-center text-sm text-gray-500">
+                                {state === "register" ? (
+                                    <p>Already have an account? <span onClick={() => setState("login")} className="text-emerald-600 cursor-pointer">Sign in</span></p>
+                                ) : (
+                                    <p>Create an account? <span onClick={() => setState("register")} className="text-emerald-600 cursor-pointer">Sign up</span></p>
+                                )}
+
+                                <a className="text-emerald-600" href="#">Forgot?</a>
+                            </div>
+
+                            <button className="mt-2 bg-emerald-600 hover:bg-emerald-700 text-white py-3 rounded-lg font-medium transition-transform transform hover:-translate-y-0.5">
+                                {state === "register" ? "Create Account" : "Login"}
+                            </button>
+
+                            <div className="mt-3 text-center text-sm text-gray-500">or continue with</div>
+                            <div className="mt-3 flex gap-3">
+                                <button type="button" className="flex-1 py-2 border border-gray-200 rounded-lg hover:shadow-sm transition">Google</button>
+                                <button type="button" className="flex-1 py-2 border border-gray-200 rounded-lg hover:shadow-sm transition">Apple</button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
-            )}
-            <div className="w-full ">
-                <p>Email</p>
-                <input onChange={(e) => setEmail(e.target.value)} value={email} placeholder="type here" className="border border-gray-200 rounded w-full p-2 mt-1 outline-primary" type="email" required />
-            </div>
-            <div className="w-full ">
-                <p>Password</p>
-                <input onChange={(e) => setPassword(e.target.value)} value={password} placeholder="type here" className="border border-gray-200 rounded w-full p-2 mt-1 outline-primary" type="password" required />
-            </div>
-            {state === "register" ? (
-                <p>
-                    Already have account? <span onClick={() => setState("login")} className="text-primary cursor-pointer">click here</span>
-                </p>
-            ) : (
-                <p>
-                    Create an account? <span onClick={() => setState("register")} className="text-primary cursor-pointer">click here</span>
-                </p>
-            )}
-            <button className="bg-primary hover:bg-primary-dull transition-all text-white w-full py-2 rounded-md cursor-pointer">
-                {state === "register" ? "Create Account" : "Login"}
-            </button>
-        </form>
-        </div>
-    );
+        );
 };
 export default Login
