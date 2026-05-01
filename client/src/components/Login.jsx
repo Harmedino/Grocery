@@ -1,6 +1,7 @@
 
 import React from "react";
 import { useAppContext } from "../contex/AppContex";
+import { assets } from "../assets/assets";
 import toast from "react-hot-toast";
 
 const Login = () => {
@@ -35,8 +36,8 @@ const Login = () => {
                 <div onClick={()=> setShowUserLogin(false)} className="fixed inset-0 z-40 flex items-center justify-center bg-black/50 p-4">
                     <div onClick={(e)=> e.stopPropagation()} className="relative w-full max-w-md bg-white rounded-2xl shadow-2xl overflow-hidden">
                         <div className="absolute -top-16 left-1/2 -translate-x-1/2">
-                            <div className="w-32 h-32 bg-gradient-to-tr from-emerald-400 to-green-600 rounded-full flex items-center justify-center shadow-xl animate-rotate-slow">
-                                <img src="/src/assets/profile_icon.png" alt="logo" className="w-20 h-20" />
+                            <div className="w-32 h-32 bg-gradient-to-tr from-emerald-400 to-green-600 rounded-full flex items-center justify-center shadow-xl">
+                                <img src={assets.profile_icon} alt="logo" className="w-20 h-20" />
                             </div>
                         </div>
 
