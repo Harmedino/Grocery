@@ -1,150 +1,153 @@
-import React, { useEffect, useState } from "react";
-import { useAppContext } from "../contex/AppContex";
+import { useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { assets } from "../assets/assets";
-import ProductCard from "../components/ProductCard";
+import { ArrowLeft, Check, ShoppingBasket, Truck, Wallet } from "lucide-react";
+import { useAppContext } from "../contex/AppContex";
+import { categoryTint, findCategory } from "../config/categories";
+import { STORE } from "../config/store";
+import { discountPercent, formatPrice, whatsappLink } from "../utils/format";
+import QuantityStepper from "../components/QuantityStepper";
+import ProductGrid from "../components/ProductGrid";
+import SectionHeader from "../components/SectionHeader";
+import WhatsAppIcon from "../components/WhatsAppIcon";
+import NotFound from "./NotFound";
 
 const ProductDetails = () => {
-  const { products, navigate, currency, addToCart } = useAppContext();
+  const { products, productsLoading, navigate, addToCart, cartItems } = useAppContext();
   const { id } = useParams();
-
-  const [relatedProducts, setRelatedProducts] = useState([]);
-  const [thumbnail, setThumbnail] = useState(null);
-
   const product = products.find((p) => p._id === id);
+  const [selected, setSelected] = useState(0);
 
-  useEffect(() => {
-    if (product) {
-      let productsCopy = products.slice();
-      productsCopy = productsCopy.filter(
-        (item) => product.category === item.category
-      );
-      setRelatedProducts(productsCopy.slice(0, 5));
-      setThumbnail(product.images[0]);
-      console.log(product)
-    }
-  }, [products, product]);
+  const related = useMemo(
+    () => (product ? products.filter((p) => p.category === product.category && p._id !== product._id && p.inStock).slice(0, 10) : []),
+    [products, product]
+  );
 
-  useEffect(() => {
-    setThumbnail(product?.image?.[0] ? product.images[0] : null);
-  }, [product]);
+  if (productsLoading) {
+    return <div className="mt-10 h-96 animate-pulse rounded-3xl bg-white ring-1 ring-line" />;
+  }
+  if (!product) return <NotFound message="This product is no longer available." />;
+
+  const category = findCategory(product.category);
+  const off = discountPercent(product);
+  const inBasket = cartItems[product._id] > 0;
+  const image = product.images?.[selected] || product.images?.[0];
 
   return (
-    product && (
-      <div className="mt-12">
-        <p>
-          <Link to={"/"}>Home</Link> /<Link to={"/products"}> Products</Link> /
-          <Link to={`/product/${product.category.toLowerCase()}`}>
-            {" "}
-            {product.category}
-          </Link>{" "}
-          /<span className="text-primary"> {product.name}</span>
-        </p>
+    <div className="pt-6 md:pt-10">
+      <Link to={`/products/${product.category.toLowerCase()}`} className="inline-flex min-h-12 items-center gap-2 font-bold text-primary">
+        <ArrowLeft className="size-5" aria-hidden="true" /> Back to {category?.text || product.category}
+      </Link>
 
-        <div className="flex flex-col md:flex-row gap-16 mt-4">
-          <div className="flex gap-3">
-            <div className="flex flex-col gap-3">
-              {product.images.map((image, index) => (
-                <div
-                  key={index}
-                  onClick={() => setThumbnail(image)}
-                  className="border max-w-24 border-gray-500/30 rounded overflow-hidden cursor-pointer"
+      <div className="mt-3 grid gap-6 rounded-[2rem] bg-white p-4 ring-1 ring-line sm:p-8 lg:grid-cols-2 lg:gap-12">
+        <div>
+          <div className="relative grid aspect-square place-items-center rounded-3xl" style={{ backgroundColor: categoryTint(product.category) }}>
+            {off > 0 && (
+              <span className="absolute left-4 top-4 rounded-full bg-accent px-4 py-1 text-lg font-extrabold text-white">{off}% off</span>
+            )}
+            <img src={image} alt={product.name} className="size-[62%] object-contain mix-blend-multiply" />
+          </div>
+          {product.images?.length > 1 && (
+            <div className="mt-3 flex gap-3">
+              {product.images.map((src, i) => (
+                <button
+                  key={src}
+                  type="button"
+                  onClick={() => setSelected(i)}
+                  aria-label={`Show picture ${i + 1}`}
+                  className={`grid size-20 place-items-center rounded-xl bg-white ring-2 ${i === selected ? "ring-primary" : "ring-line"}`}
                 >
-                  <img src={image} alt={`Thumbnail ${index + 1}`} />
-                </div>
+                  <img src={src} alt="" className="size-14 object-contain" />
+                </button>
               ))}
             </div>
-
-            <div className="border border-gray-500/30 max-w-100 rounded overflow-hidden">
-              <img
-                src={thumbnail}
-                alt="Selected product"
-                className="w-full h-full object-cover"
-              />
-            </div>
-          </div>
-
-          <div className="text-sm w-full md:w-1/2">
-            <h1 className="text-3xl font-medium">{product.name}</h1>
-
-            <div className="flex items-center gap-0.5 mt-1">
-              {Array(5)
-                .fill("")
-                .map((_, i) => (
-                  <img
-                    key={i}
-                    src={i < 4 ? assets.star_icon : assets.star_dull_icon}
-                    alt=""
-                    className="md:w-4 w-3.5"
-                  />
-                ))}
-              <p className="text-base ml-2">(4)</p>
-            </div>
-
-            <div className="mt-6">
-              <p className="text-gray-500/70 line-through">
-                MRP: {currency} {product.price}
-              </p>
-              <p className="text-2xl font-medium">
-                MRP: {currency} {product.offerPrice}
-              </p>
-              <span className="text-gray-500/70">(inclusive of all taxes)</span>
-            </div>
-
-            <p className="text-base font-medium mt-6">About Product</p>
-            <ul className="list-disc ml-4 text-gray-500/70">
-              {product.description.map((desc, index) => (
-                <li key={index}>{desc}</li>
-              ))}
-            </ul>
-
-            <div className="flex items-center mt-10 gap-4 text-base">
-              <button
-                onClick={() => addToCart(product._id)}
-                className="w-full py-3.5 cursor-pointer font-medium bg-gray-100 text-gray-800/80 hover:bg-gray-200 transition"
-              >
-                Add to Cart
-              </button>
-              <button
-                onClick={() => {
-                  addToCart(product._id);
-                  navigate("/cart");
-                }}
-                className="w-full py-3.5 cursor-pointer font-medium bg-primary text-white hover:bg-primary-dull transition"
-              >
-                Buy now
-              </button>
-            </div>
-          </div>
+          )}
         </div>
-        {/* related product */}
-      <div className="flex flex-col items-center mt-20">
-  <div className="flex flex-col items-center w-max">
-    <p className="text-3xl font-medium">Related Products</p>
-    <div className="w-20 h-0.5 bg-primary rounded-full mt-2"></div>
-  </div>
 
-  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 md:gap-6 mt-6 w-full">
-    {relatedProducts
-      .filter((product) => product.inStock)
-      .map((product, index) => (
-        <ProductCard key={index} product={product} />
-      ))}
-  </div>
+        <div className="flex flex-col">
+          <p className="font-bold text-primary">{category?.text || product.category}</p>
+          <h1 className="mt-1 text-3xl font-extrabold leading-tight tracking-tight sm:text-4xl">{product.name}</h1>
+          {product.unit && <p className="mt-2 text-xl font-semibold text-muted">{product.unit}</p>}
 
-  <button
-    onClick={() => {
-      navigate("/products");
-      scrollTo(0, 0);
-    }}
-    className="mx-auto cursor-pointer px-12 my-16 py-2.5 border rounded text-primary hover:bg-primary/10 transition"
-  >
-    See more
-  </button>
-</div>
+          <div className="mt-6 flex flex-wrap items-center gap-x-4 gap-y-2">
+            <span className="text-4xl font-extrabold">{formatPrice(product.offerPrice)}</span>
+            {off > 0 && (
+              <>
+                <s className="text-xl text-muted">{formatPrice(product.price)}</s>
+                <span className="rounded-full bg-accent-soft px-3 py-1 font-extrabold text-accent">
+                  You save {formatPrice(product.price - product.offerPrice)}
+                </span>
+              </>
+            )}
+          </div>
 
+          <p className={`mt-4 flex items-center gap-2 text-lg font-bold ${product.inStock ? "text-primary" : "text-accent"}`}>
+            {product.inStock ? <><Check className="size-5" strokeWidth={3} aria-hidden="true" /> In stock</> : "Out of stock right now"}
+          </p>
+
+          {product.inStock && (
+            <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+              {inBasket ? (
+                <>
+                  <div className="sm:w-56">
+                    <QuantityStepper product={product} size="lg" />
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => { navigate("/cart"); scrollTo(0, 0); }}
+                    className="flex h-14 flex-1 items-center justify-center gap-2 rounded-2xl bg-primary px-6 text-lg font-extrabold text-white hover:bg-primary-dull"
+                  >
+                    <ShoppingBasket className="size-6" aria-hidden="true" /> Go to basket
+                  </button>
+                </>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => addToCart(product._id)}
+                  className="flex h-14 flex-1 items-center justify-center gap-2 rounded-2xl bg-primary px-6 text-lg font-extrabold text-white shadow-lg shadow-primary/25 hover:bg-primary-dull"
+                >
+                  <ShoppingBasket className="size-6" aria-hidden="true" /> Add to basket
+                </button>
+              )}
+            </div>
+          )}
+
+          <ul className="mt-6 space-y-3 rounded-2xl bg-canvas p-4 text-base">
+            <li className="flex items-start gap-3"><Truck className="mt-0.5 size-5 shrink-0 text-primary" aria-hidden="true" /> {STORE.deliveryPromise}</li>
+            <li className="flex items-start gap-3"><Wallet className="mt-0.5 size-5 shrink-0 text-primary" aria-hidden="true" /> Pay when it arrives: cash or bank transfer</li>
+          </ul>
+
+          {product.description?.length > 0 && (
+            <div className="mt-6">
+              <h2 className="text-xl font-extrabold">About this product</h2>
+              <ul className="mt-3 space-y-2 text-lg">
+                {product.description.map((line) => (
+                  <li key={line} className="flex gap-3">
+                    <span className="mt-2.5 size-2 shrink-0 rounded-full bg-primary" aria-hidden="true" />
+                    {line}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          <a
+            href={whatsappLink(`Hello ${STORE.name}, I have a question about ${product.name} (${product.unit}).`)}
+            target="_blank"
+            rel="noreferrer"
+            className="mt-6 inline-flex min-h-12 items-center gap-2 self-start font-bold text-primary underline underline-offset-4"
+          >
+            <WhatsAppIcon className="size-5 text-[#1ea952]" /> Ask us about this on WhatsApp
+          </a>
+        </div>
       </div>
-    )
+
+      {related.length > 0 && (
+        <section className="mt-14">
+          <SectionHeader title="You may also need" linkTo={`/products/${product.category.toLowerCase()}`} linkText="See more" />
+          <ProductGrid products={related} compact />
+        </section>
+      )}
+    </div>
   );
 };
 

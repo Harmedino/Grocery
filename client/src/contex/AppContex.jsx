@@ -1,12 +1,14 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import axios from 'axios'
+import { CURRENCY } from "../config/store";
 
 axios.defaults.withCredentials = true;
 axios.defaults.baseURL = import.meta.env.VITE_BACKEND_URL;
 
 const CART_KEY = "cartItems";
+const TEXT_KEY = "largeText";
 
 // Local copy of the cart so it survives a refresh and a slow login check
 const loadLocalCart = () => {
@@ -30,15 +32,22 @@ const mergeCarts = (serverCart = {}, localCart = {}) => {
 export const AppContext = createContext();
 
 export const AppContextProvider = ({ children }) => {
-  const currency = import.meta.env.VITE_CURRENCY;
+  const currency = CURRENCY;
   const navigate = useNavigate();
 
   const [user, setUser] = useState(null);
   const [isSeller, setIsSeller] = useState(false);
   const [showUserLogin, setShowUserLogin] = useState(false);
   const [products, setProducts] = useState([]);
+  const [productsLoading, setProductsLoading] = useState(true);
   const [cartItems, setCartItems] = useState(loadLocalCart);
-  const [searchQuery, setSearchQuery] = useState("");
+  const [largeText, setLargeText] = useState(() => {
+    try {
+      return localStorage.getItem(TEXT_KEY) === "1";
+    } catch {
+      return false;
+    }
+  });
 
   const fetchSeller = async ()=>{
 try {
@@ -48,7 +57,7 @@ try {
   }else{
     setIsSeller(false)
   }
-} catch (error) {
+} catch {
   setIsSeller(false)
 }
   }
@@ -60,7 +69,7 @@ try {
       if(data.success){
         loginUser(data.user)
       }
-    } catch (error) {
+    } catch {
       setUser(null)
     }
   }
@@ -86,6 +95,8 @@ try {
      }
    } catch (error) {
     toast.error(error.message)
+   } finally {
+    setProductsLoading(false)
    }
   };
 
@@ -100,7 +111,8 @@ try {
       cartData[itemId] = 1;
     }
     setCartItems(cartData);
-    toast.success("Item added to cart");
+    const product = products.find((p) => p._id === itemId);
+    toast.success(product ? `${product.name} added to your basket` : "Added to your basket", { id: "cart" });
   };
 
   const updateCartItems = (itemId, quantity) => {
@@ -111,7 +123,6 @@ try {
       delete cartData[itemId];
     }
     setCartItems(cartData);
-    toast.success("Cart updated");
   };
 
   const removeFromCart = (itemId) => {
@@ -123,7 +134,7 @@ try {
       }
     }
     setCartItems(cartData);
-    toast.success("Item removed from cart");
+    if (!cartData[itemId]) toast.success("Removed from your basket", { id: "cart" });
   };
 
   const getCartCount = ()=>{
@@ -142,14 +153,32 @@ try {
         totalAmount += product.offerPrice * cartItems[item];
       }
     }
-    return Math.floor(totalAmount * 100)/ 100
+    return Math.round(totalAmount * 100)/ 100
   }
+
+  // Basket rows for products we know about, in the order they were added
+  const cartLines = useMemo(
+    () =>
+      Object.entries(cartItems)
+        .map(([id, quantity]) => ({ product: products.find((p) => p._id === id), quantity }))
+        .filter((line) => line.product && line.quantity > 0),
+    [cartItems, products]
+  );
 
   useEffect(() => {
     fetchProducts();
     fetchSeller();
     fetchUser()
   }, []);
+
+  useEffect(() => {
+    document.documentElement.classList.toggle("large-text", largeText);
+    try {
+      localStorage.setItem(TEXT_KEY, largeText ? "1" : "0");
+    } catch {
+      // preference just won't persist
+    }
+  }, [largeText]);
 
   useEffect(() => {
     try {
@@ -202,13 +231,15 @@ try {
     showUserLogin,
     setShowUserLogin,
     products,
+    productsLoading,
     cartItems,
+    cartLines,
+    largeText,
+    toggleLargeText: () => setLargeText((v) => !v),
     currency,
     addToCart,
     updateCartItems,
     removeFromCart,
-    setSearchQuery,
-    searchQuery,
     getCartCount,
     getCartTotalAmount,
     axios,

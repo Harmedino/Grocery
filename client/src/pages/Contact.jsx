@@ -1,103 +1,105 @@
-import React from "react";
-import { assets } from "../assets/assets";
-import { useAppContext } from "../contex/AppContex";
+import { useState } from "react";
+import { Clock, Mail, MapPin, Phone } from "lucide-react";
 import toast from "react-hot-toast";
+import { useAppContext } from "../contex/AppContex";
+import { STORE } from "../config/store";
+import { phoneLink, whatsappLink } from "../utils/format";
+import WhatsAppIcon from "../components/WhatsAppIcon";
+
+const inputClass = "w-full rounded-xl bg-white px-4 text-lg outline-none ring-2 ring-line focus:ring-primary";
 
 const Contact = () => {
-  const { axios } = useAppContext();
-  const [name, setName] = React.useState("");
-  const [email, setEmail] = React.useState("");
-  const [subject, setSubject] = React.useState("");
-  const [message, setMessage] = React.useState("");
-  const [loading, setLoading] = React.useState(false);
+  const { axios, user } = useAppContext();
+  const [form, setForm] = useState({ name: user?.name || "", email: user?.email || "", subject: "", message: "" });
+  const [sending, setSending] = useState(false);
+  const set = (e) => setForm((f) => ({ ...f, [e.target.name]: e.target.value }));
 
   const onSubmit = async (e) => {
     e.preventDefault();
-    if (!name || !email || !message) {
-      return toast.error("Please fill required fields");
-    }
-    setLoading(true);
+    setSending(true);
     try {
-      // Try to post to a contact API if available. If not, we'll just show success.
-      await axios.post("/api/contact", { name, email, subject, message });
-      toast.success("Message sent — we'll get back to you soon.");
-      setName("");
-      setEmail("");
-      setSubject("");
-      setMessage("");
-    } catch (err) {
-      // if endpoint not available, still give feedback
-      console.error(err);
-      toast.success("Message saved locally (no backend). Check console for details.");
+      const { data } = await axios.post("/api/contact", form);
+      if (data.success) {
+        toast.success(data.message);
+        setForm((f) => ({ ...f, subject: "", message: "" }));
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Sorry, your message did not send. Please call or WhatsApp us.");
     } finally {
-      setLoading(false);
+      setSending(false);
     }
   };
 
+  const ways = [
+    { href: phoneLink(), icon: <Phone className="size-7" aria-hidden="true" />, title: "Call us", text: STORE.phoneDisplay, tint: "bg-primary-soft text-primary" },
+    { href: whatsappLink(`Hello ${STORE.name}`), icon: <WhatsAppIcon className="size-7" />, title: "WhatsApp", text: "Chat with us", tint: "bg-[#e6f9ee] text-[#1ea952]", external: true },
+    { href: `mailto:${STORE.email}`, icon: <Mail className="size-7" aria-hidden="true" />, title: "Email", text: STORE.email, tint: "bg-[#eaf1fb] text-[#2563eb]" },
+  ];
+
   return (
-    <div className="py-12">
-      <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 items-start px-4">
-        <div>
-          <h1 className="text-3xl font-bold">Contact Us</h1>
-          <p className="mt-3 text-gray-600">Have a question or need help? We'd love to hear from you.</p>
+    <div className="pt-6 md:pt-10">
+      <h1 className="text-3xl font-extrabold tracking-tight sm:text-5xl">We are here to help</h1>
+      <p className="mt-2 text-lg text-muted">The quickest way to reach us is by phone or WhatsApp. {STORE.hours}.</p>
 
-          <div className="mt-8 grid grid-cols-1 gap-4">
-            <div className="flex items-start gap-4 bg-white p-4 rounded-lg border border-gray-100 shadow-sm">
-              <img src={assets.delivery_truck_icon} alt="icon" className="w-10 h-10" />
-              <div>
-                <p className="font-semibold">Customer Support</p>
-                <p className="text-sm text-gray-500">support@grocery.example</p>
-                <p className="text-sm text-gray-500">Mon — Fri, 9am — 6pm</p>
-              </div>
+      <div className="mt-6 grid gap-4 sm:grid-cols-3">
+        {ways.map((w) => (
+          <a
+            key={w.title}
+            href={w.href}
+            target={w.external ? "_blank" : undefined}
+            rel={w.external ? "noreferrer" : undefined}
+            className="flex items-center gap-4 rounded-3xl bg-white p-5 ring-1 ring-line transition hover:-translate-y-0.5 hover:shadow-lg"
+          >
+            <span className={`grid size-14 shrink-0 place-items-center rounded-2xl ${w.tint}`}>{w.icon}</span>
+            <span>
+              <span className="block text-xl font-extrabold">{w.title}</span>
+              <span className="block break-all text-muted">{w.text}</span>
+            </span>
+          </a>
+        ))}
+      </div>
+
+      <div className="mt-6 grid gap-6 lg:grid-cols-2">
+        <form onSubmit={onSubmit} className="space-y-4 rounded-[2rem] bg-white p-6 ring-1 ring-line sm:p-8">
+          <h2 className="text-2xl font-extrabold">Send us a message</h2>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div>
+              <label htmlFor="c-name" className="mb-1.5 block font-bold">Your name</label>
+              <input id="c-name" name="name" value={form.name} onChange={set} required className={`${inputClass} h-14`} />
             </div>
-
-            <div className="flex items-start gap-4 bg-white p-4 rounded-lg border border-gray-100 shadow-sm">
-              <img src={assets.trust_icon} alt="icon" className="w-10 h-10" />
-              <div>
-                <p className="font-semibold">Head Office</p>
-                <p className="text-sm text-gray-500">123 Market Street, YourCity</p>
-                <p className="text-sm text-gray-500">+1 (555) 123-4567</p>
-              </div>
-            </div>
-
-            <div className="mt-6">
-              <h3 className="font-semibold">Frequently asked</h3>
-              <ul className="mt-3 text-sm text-gray-600 space-y-2">
-                <li>How long does delivery take? — Usually within 30–60 minutes.</li>
-                <li>Do you offer refunds? — Yes, within 7 days with receipt.</li>
-                <li>Can I change my order? — Contact support as soon as possible.</li>
-              </ul>
-            </div>
-          </div>
-
-          <div className="mt-8">
-            <h3 className="font-semibold">Find us</h3>
-            <div className="mt-3 rounded overflow-hidden border border-gray-100">
-              <iframe
-                title="map"
-                src="https://maps.google.com/maps?q=New%20York%20City&t=&z=13&ie=UTF8&iwloc=&output=embed"
-                className="w-full h-48"
-              />
+            <div>
+              <label htmlFor="c-email" className="mb-1.5 block font-bold">Email</label>
+              <input id="c-email" name="email" type="email" value={form.email} onChange={set} required className={`${inputClass} h-14`} />
             </div>
           </div>
-        </div>
-
-        <div>
-          <div className="bg-white p-6 rounded-lg shadow-md border border-gray-100">
-            <h2 className="text-xl font-semibold">Send us a message</h2>
-            <form onSubmit={onSubmit} className="mt-4 flex flex-col gap-3">
-              <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Full name" className="border border-gray-200 rounded p-3 focus:outline-none" />
-              <input value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email address" className="border border-gray-200 rounded p-3 focus:outline-none" />
-              <input value={subject} onChange={(e) => setSubject(e.target.value)} placeholder="Subject (optional)" className="border border-gray-200 rounded p-3 focus:outline-none" />
-              <textarea value={message} onChange={(e) => setMessage(e.target.value)} placeholder="Your message" rows={6} className="border border-gray-200 rounded p-3 focus:outline-none" />
-
-              <button className="mt-2 bg-emerald-600 hover:bg-emerald-700 text-white py-3 rounded-lg" disabled={loading}>
-                {loading ? "Sending..." : "Send Message"}
-              </button>
-            </form>
-
-            <p className="text-sm text-gray-500 mt-4">We typically reply within 24 hours.</p>
+          <div>
+            <label htmlFor="c-subject" className="mb-1.5 block font-bold">Subject <span className="font-normal text-muted">(optional)</span></label>
+            <input id="c-subject" name="subject" value={form.subject} onChange={set} className={`${inputClass} h-14`} />
           </div>
+          <div>
+            <label htmlFor="c-message" className="mb-1.5 block font-bold">Message</label>
+            <textarea id="c-message" name="message" rows={5} value={form.message} onChange={set} required className={`${inputClass} py-3`} />
+          </div>
+          <button disabled={sending} className="h-14 w-full rounded-2xl bg-primary text-lg font-extrabold text-white hover:bg-primary-dull disabled:opacity-60">
+            {sending ? "Sending..." : "Send message"}
+          </button>
+          <p className="text-center text-muted">We usually reply within a few hours.</p>
+        </form>
+
+        <div className="space-y-4">
+          <div className="rounded-[2rem] bg-white p-6 ring-1 ring-line sm:p-8">
+            <h2 className="text-2xl font-extrabold">Visit the shop</h2>
+            <p className="mt-3 flex items-start gap-3 text-lg"><MapPin className="mt-1 size-5 shrink-0 text-primary" aria-hidden="true" /> {STORE.address}</p>
+            <p className="mt-2 flex items-start gap-3 text-lg"><Clock className="mt-1 size-5 shrink-0 text-primary" aria-hidden="true" /> {STORE.hours}</p>
+          </div>
+          <iframe
+            title="Map showing the shop"
+            src={`https://maps.google.com/maps?q=${encodeURIComponent(STORE.address)}&z=15&output=embed`}
+            className="h-72 w-full rounded-[2rem] ring-1 ring-line"
+            loading="lazy"
+          />
         </div>
       </div>
     </div>
