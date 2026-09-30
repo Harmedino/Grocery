@@ -1,18 +1,60 @@
-
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap'); 
+@import "@fontsource-variable/figtree";
 @import "tailwindcss";
 
+@theme {
+  --font-sans: "Figtree Variable", ui-sans-serif, system-ui, sans-serif;
 
-* {
-  font-family: "Outfit", sans-serif;
+  --color-primary: #15803d;
+  --color-primary-dull: #166534;
+  --color-primary-deep: #0f3d26;
+  --color-primary-soft: #eaf7ee;
+  --color-accent: #c2410c;
+  --color-accent-soft: #fff1e8;
+  --color-ink: #14201a;
+  --color-muted: #4a5750;
+  --color-canvas: #f5f6f1;
+  --color-line: #e2e6dd;
+
+  --animate-float: float 6s ease-in-out infinite;
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
 }
 
-@theme{
-  --color-primary:  #4fbf8b;
-  --color-primary-dull: #44ae7c;
+/* Larger base size for easy reading; "Larger text" bumps it further */
+html {
+  font-size: 18px;
+  -webkit-text-size-adjust: 100%;
+}
+html.large-text {
+  font-size: 21px;
 }
 
-.no-scrollbar::-webkit-scrollbar{
+body {
+  background: var(--color-canvas);
+  color: var(--color-ink);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Strong, visible focus for keyboard users */
+:focus-visible {
+  outline: 3px solid #f59e0b;
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+.no-scrollbar::-webkit-scrollbar {
   display: none;
-
+}
+.no-scrollbar {
+  scrollbar-width: none;
 }

@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { assets, categories } from "../../assets/assets";
+import { assets } from "../../assets/assets";
+import { categories } from "../../config/categories";
 import { useAppContext } from "../../contex/AppContex";
 import toast from "react-hot-toast";
 
@@ -10,6 +11,7 @@ const AddProduct = () => {
   const [category, setCategory] = useState("");
   const [price, setPrice] = useState("");
   const [offerPrice, setOfferPrice] = useState("");
+  const [unit, setUnit] = useState("");
 
   const { axios } = useAppContext();
   const onSubmitHandler = async (e) => {
@@ -19,8 +21,9 @@ const AddProduct = () => {
         name,
         description: description.split("\n"),
         category,
-        price,
-        offerPrice,
+        price: Number(price),
+        offerPrice: Number(offerPrice || price),
+        unit,
       };
       const formData = new FormData();
       formData.append("productData", JSON.stringify(productData));
@@ -37,24 +40,27 @@ const AddProduct = () => {
         setCategory("");
         setPrice("");
         setOfferPrice("");
+        setUnit("");
         setFiles([]);
       } else {
         toast.error(data.message);
       }
     } catch (error) {
-      toast.error(error.message);
+      toast.error(error.response?.data?.message || error.message);
     }
   };
 
   return (
-    <div className="no-scrollbar flex-1 h-[95vh] overflow-y-scroll flex flex-col justify-between">
+    <div>
+      <h1 className="text-3xl font-extrabold tracking-tight">Add a product</h1>
+      <p className="mt-1 text-muted">It appears in the shop as soon as you save it.</p>
       <form
         onSubmit={onSubmitHandler}
-        className="md:p-10 p-4 space-y-5 max-w-lg"
+        className="mt-6 max-w-2xl space-y-5 rounded-[2rem] bg-white p-6 ring-1 ring-line sm:p-8"
       >
         {/* Product Images */}
         <div>
-          <p className="text-base font-medium">Product Image</p>
+          <p className="font-bold">Product Image</p>
           <div className="flex flex-wrap items-center gap-3 mt-2">
             {Array(4)
               .fill("")
@@ -89,7 +95,7 @@ const AddProduct = () => {
 
         {/* Product Name */}
         <div className="flex flex-col gap-1 max-w-md">
-          <label className="text-base font-medium" htmlFor="product-name">
+          <label className="font-bold" htmlFor="product-name">
             Product Name
           </label>
           <input
@@ -98,7 +104,7 @@ const AddProduct = () => {
             id="product-name"
             type="text"
             placeholder="Type here"
-            className="outline-none md:py-2.5 py-2 px-3 rounded border border-gray-500/40"
+            className="outline-none md:py-2.5 py-2 px-3 rounded-xl border border-line text-lg"
             required
           />
         </div>
@@ -106,7 +112,7 @@ const AddProduct = () => {
         {/* Description */}
         <div className="flex flex-col gap-1 max-w-md">
           <label
-            className="text-base font-medium"
+            className="font-bold"
             htmlFor="product-description"
           >
             Product Description
@@ -116,21 +122,22 @@ const AddProduct = () => {
             value={description}
             id="product-description"
             rows={4}
-            className="outline-none md:py-2.5 py-2 px-3 rounded border border-gray-500/40 resize-none"
+            className="outline-none md:py-2.5 py-2 px-3 rounded-xl border border-line text-lg resize-none"
             placeholder="Type here"
           ></textarea>
         </div>
 
         {/* Category */}
         <div className="w-full flex flex-col gap-1">
-          <label className="text-base font-medium" htmlFor="category">
+          <label className="font-bold" htmlFor="category">
             Category
           </label>
           <select
             onChange={(e) => setCategory(e.target.value)}
             value={category}
             id="category"
-            className="outline-none md:py-2.5 py-2 px-3 rounded border border-gray-500/40"
+            required
+            className="outline-none md:py-2.5 py-2 px-3 rounded-xl border border-line text-lg"
           >
             <option value="">Select Category</option>
             {categories.map((item, index) => (
@@ -141,11 +148,26 @@ const AddProduct = () => {
           </select>
         </div>
 
+        {/* Pack size */}
+        <div className="flex flex-col gap-1 max-w-md">
+          <label className="font-bold" htmlFor="product-unit">
+            Pack size
+          </label>
+          <input
+            onChange={(e) => setUnit(e.target.value)}
+            value={unit}
+            id="product-unit"
+            type="text"
+            placeholder="e.g. 1 kg, 50 kg bag, 1 paint bucket, 6 pieces"
+            className="outline-none md:py-2.5 py-2 px-3 rounded-xl border border-line text-lg"
+          />
+        </div>
+
         {/* Pricing */}
         <div className="flex items-center gap-5 flex-wrap">
           <div className="flex-1 flex flex-col gap-1 w-32">
-            <label className="text-base font-medium" htmlFor="product-price">
-              Product Price
+            <label className="font-bold" htmlFor="product-price">
+              Normal price (₦)
             </label>
             <input
               onChange={(e) => setPrice(e.target.value)}
@@ -153,14 +175,14 @@ const AddProduct = () => {
               id="product-price"
               type="number"
               placeholder="0"
-              className="outline-none md:py-2.5 py-2 px-3 rounded border border-gray-500/40"
+              className="outline-none md:py-2.5 py-2 px-3 rounded-xl border border-line text-lg"
               required
             />
           </div>
 
           <div className="flex-1 flex flex-col gap-1 w-32">
-            <label className="text-base font-medium" htmlFor="offer-price">
-              Offer Price
+            <label className="font-bold" htmlFor="offer-price">
+              Selling price (₦)
             </label>
             <input
               onChange={(e) => setOfferPrice(e.target.value)}
@@ -168,14 +190,14 @@ const AddProduct = () => {
               id="offer-price"
               type="number"
               placeholder="0"
-              className="outline-none md:py-2.5 py-2 px-3 rounded border border-gray-500/40"
+              className="outline-none md:py-2.5 py-2 px-3 rounded-xl border border-line text-lg"
             />
           </div>
         </div>
 
         {/* Submit */}
-        <button className="px-8 py-2.5 bg-primary text-white font-medium rounded cursor-pointer">
-          ADD
+        <button className="h-14 rounded-2xl bg-primary px-10 text-lg font-extrabold text-white hover:bg-primary-dull">
+          Save product
         </button>
       </form>
     </div>

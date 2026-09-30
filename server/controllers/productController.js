@@ -1,4 +1,4 @@
-import {v2 as  cloudinary } from 'cloudinary'
+import fs from 'fs';
 import Product from '../models/product.js';
 import { connectCloudinary } from '../configs/cloudinary.js';
 
@@ -7,21 +7,23 @@ import { connectCloudinary } from '../configs/cloudinary.js';
 export const addProduct = async (req, res) => {
   try {
     const productData = JSON.parse(req.body.productData);
-    console.log("Parsed product data:", productData);
 
     if (!req.files || req.files.length === 0) {
       return res.status(400).json({ success: false, message: "No images uploaded" });
     }
   
-    // Upload all images to Cloudinary
+    // Upload all images to Cloudinary, then drop the temp copies
     const imageUrls = await Promise.all(
       req.files.map(async (file) => {
-        const result = await connectCloudinary(file.path, "products");
-        if (!result.success) throw new Error(result.error);
-        return result.url;
+        try {
+          const result = await connectCloudinary(file.path, "products");
+          if (!result.success) throw new Error(result.error);
+          return result.url;
+        } finally {
+          fs.promises.unlink(file.path).catch(() => {});
+        }
       })
     );
-      console.log(imageUrls)
   const product = await Product.create({
       ...productData,
       images: imageUrls,

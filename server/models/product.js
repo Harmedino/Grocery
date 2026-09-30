@@ -38,6 +38,17 @@ const productSchema = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
+
+    unit: {
+      type: String, // pack size shown to shoppers, e.g. "1 kg" or "6 pcs"
+      default: "",
+      trim: true,
+    },
+
+    tags: {
+      type: [String], // e.g. "bestseller", "organic"
+      default: [],
+    },
   },
   { timestamps: true }
 );

@@ -1,168 +1,208 @@
-import React, { useEffect } from "react";
-import { Navigate, NavLink } from "react-router-dom";
-import { assets } from "../assets/assets";
-import { useAppContext } from "../contex/AppContex";
+import { useEffect, useId, useRef, useState } from "react";
+import { Link, NavLink, useLocation, useSearchParams } from "react-router-dom";
+import { ALargeSmall, ChevronDown, ClipboardList, LogOut, Phone, Search, ShoppingBasket, Truck, User } from "lucide-react";
 import toast from "react-hot-toast";
+import { useAppContext } from "../contex/AppContex";
+import { FREE_DELIVERY_FROM, STORE } from "../config/store";
+import { formatPrice, phoneLink } from "../utils/format";
+import Logo from "./Logo";
 
-const Navbar = () => {
-  const [open, setOpen] = React.useState(false);
+const links = [
+  { to: "/", label: "Home" },
+  { to: "/products", label: "All products" },
+  { to: "/deals", label: "Today's deals" },
+  { to: "/categories", label: "Categories" },
+  { to: "/help", label: "How to order" },
+  { to: "/contact", label: "Contact" },
+];
 
-  const { user,axios, setUser, setShowUserLogin, navigate,  setSearchQuery, searchQuery, getCartCount } = useAppContext();
+export const SearchForm = ({ className = "", autoFocus = false }) => {
+  const { navigate } = useAppContext();
+  const [params] = useSearchParams();
+  const [term, setTerm] = useState(params.get("q") || "");
+  const inputId = useId(); // the form renders twice (desktop + phone), so ids must differ
+
+  useEffect(() => setTerm(params.get("q") || ""), [params]);
+
+  const submit = (e) => {
+    e.preventDefault();
+    const q = term.trim();
+    navigate(q ? `/products?q=${encodeURIComponent(q)}` : "/products");
+  };
+
+  return (
+    <form onSubmit={submit} role="search" className={`flex h-12 items-center rounded-2xl bg-white ring-2 ring-line focus-within:ring-primary ${className}`}>
+      <Search className="ml-4 size-5 shrink-0 text-muted" aria-hidden="true" />
+      <label htmlFor={inputId} className="sr-only">Search for a product</label>
+      <input
+        id={inputId}
+        type="search"
+        value={term}
+        autoFocus={autoFocus}
+        onChange={(e) => setTerm(e.target.value)}
+        placeholder="What do you need?"
+        className="h-full min-w-0 flex-1 bg-transparent px-3 text-base outline-none placeholder:text-muted/80"
+      />
+      <button type="submit" className="mr-1 h-10 rounded-xl bg-primary px-4 font-bold text-white hover:bg-primary-dull">
+        Search
+      </button>
+    </form>
+  );
+};
+
+const AccountMenu = () => {
+  const { user, axios, logoutUser, setShowUserLogin, navigate } = useAppContext();
+  const [open, setOpen] = useState(false);
+  const ref = useRef(null);
 
   useEffect(() => {
-    if(searchQuery.length >0){
-      navigate("/products")
-    }
-  }, [searchQuery]);
+    const close = (e) => ref.current && !ref.current.contains(e.target) && setOpen(false);
+    document.addEventListener("mousedown", close);
+    return () => document.removeEventListener("mousedown", close);
+  }, []);
+
   const logout = async () => {
     try {
-      const {data}= await axios.get('api/user/logout')
-      if(data.success){
-        toast.success(data.message)
-        setUser(null);
+      const { data } = await axios.get("/api/user/logout");
+      if (data.success) {
+        toast.success("You have signed out");
+        logoutUser();
         navigate("/");
-      }else{
-          toast.error(data.message)
+      } else {
+        toast.error(data.message);
       }
     } catch (error) {
-      toast.error(error.message)
+      toast.error(error.message);
     }
+    setOpen(false);
   };
-  return (
-    <nav className="flex items-center justify-between px-6 md:px-16 lg:px-24 xl:px-32 py-4 border-b border-gray-300 bg-white relative transition-all">
-      <NavLink to={"/"} onClick={() => setOpen(false)}>
-        <img src={assets.logo} alt="logo" className="h-9" />
-      </NavLink>
 
-      {/* Desktop Menu */}
-      <div className="hidden sm:flex items-center gap-8">
-        <NavLink to="/">Home</NavLink>
-        <NavLink to="/products">All Product</NavLink>
-        <NavLink to="/contact">Contact</NavLink>
-
-        <div className="hidden lg:flex items-center text-sm gap-2 border border-gray-300 px-3 rounded-full">
-          <input
-            className="py-1.5 w-full bg-transparent outline-none placeholder-gray-500"
-            type="text"
-            placeholder="Search products"
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-          <img src={assets.search_icon} alt="search" className="w-4 h-4" />
-        </div>
-
-        <div onClick={()=> navigate("/cart")} className="relative cursor-pointer">
-          <img
-            src={assets.nav_cart_icon}
-            alt="cart"
-            className="w-6 opacity-80"
-          />
-          <button className="absolute -top-2 -right-3 text-xs text-white bg-primary w-[18px] h-[18px] rounded-full">
-            {getCartCount()}
-          </button>
-        </div>
-
-        {!user ? (
-          <button
-            onClick={() => setShowUserLogin(true)}
-            className="cursor-pointer px-8 py-2 bg-primary hover:bg-primary-dull transition text-white rounded-full"
-          >
-            Login
-          </button>
-        ) : (
-          <div className="relative group">
-            <img src={assets.profile_icon} className="w-10" alt="profile" />
-            <ul className="hidden group-hover:block absolute top-10 right-0 bg-white shadow  border-grey-200 py-2.5 w-30 rounded-md text-sm z-40">
-              <li
-                onClick={() => navigate("my-orders")}
-                className="p-1.5 pl-3 hover:bg-primary/10 cursor-pointer"
-              >
-                My Orders
-              </li>
-              <li
-                onClick={logout}
-                className="p-1.5 pl-3 hover:bg-primary/10 cursor-pointer"
-              >
-                Logout
-              </li>
-            </ul>
-          </div>
-        )}
-      </div>
-<div className="flex items-center gap-6 sm:hidden">
-  <div onClick={()=> navigate("/cart")} className="relative cursor-pointer">
-          <img
-            src={assets.nav_cart_icon}
-            alt="cart"
-            className="w-6 opacity-80"
-          />
-          <button className="absolute -top-2 -right-3 text-xs text-white bg-primary w-[18px] h-[18px] rounded-full">
-            {getCartCount()}
-          </button>
-        </div>
-  <button
-        onClick={() => (open ? setOpen(false) : setOpen(true))}
-        aria-label="Menu"
-        className=""
+  if (!user) {
+    return (
+      <button
+        type="button"
+        onClick={() => setShowUserLogin(true)}
+        className="flex h-12 items-center gap-2 rounded-2xl px-4 font-bold text-ink ring-1 ring-line hover:bg-primary-soft"
       >
-        {/* Menu Icon SVG */}
-        <img src={assets.menu_icon} alt="menu" className="" />
+        <User className="size-5" aria-hidden="true" />
+        Sign in
       </button>
-</div>
-     
+    );
+  }
 
-      {/* Mobile Menu */}
-
+  return (
+    <div className="relative" ref={ref}>
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        aria-expanded={open}
+        className="flex h-12 items-center gap-2 rounded-2xl px-4 font-bold text-ink ring-1 ring-line hover:bg-primary-soft"
+      >
+        <span className="grid size-8 place-items-center rounded-full bg-primary text-sm text-white">
+          {user.name?.[0]?.toUpperCase() || "U"}
+        </span>
+        <span className="max-w-28 truncate">Hi, {user.name?.split(" ")[0]}</span>
+        <ChevronDown className="size-4" aria-hidden="true" />
+      </button>
       {open && (
-        <div
-          className={`${
-            open ? "flex" : "hidden"
-          } absolute top-[60px] z-10 left-0 w-full bg-white shadow-md py-4 flex-col items-start gap-2 px-5 text-sm md:hidden`}
-        >
-          <NavLink to={"/"} onClick={() => setOpen(false)} className="block">
-            Home
-          </NavLink>
-          <NavLink
-            to={"/products"}
-            onClick={() => setOpen(false)}
-            className="block"
-          >
-            All Product
-          </NavLink>
-          {user && (
-            <NavLink
-              to={"/my-orders"}
-              onClick={() => setOpen(false)}
-              className="block"
-            >
-              My Orders
-            </NavLink>
-          )}
-
-          <NavLink to={"/"} onClick={() => setOpen(false)} className="block">
-            Contact
-          </NavLink>
-
-          {!user ? (
-            <button
-              onClick={() => {
-                setOpen(false);
-                setShowUserLogin(true);
-              }}
-              className="cursor-pointer px-6 py-2 mt-2 bg-primary hover:bg-primary-dull transition text-white rounded-full text-sm"
-            >
-              Login
-            </button>
-          ) : (
-            <button
-              onClick={logout}
-              className="cursor-pointer px-6 py-2 mt-2 bg-primary hover:bg-primary-dull transition text-white rounded-full text-sm"
-            >
-              Logout
-            </button>
-          )}
+        <div className="absolute right-0 top-14 z-50 w-56 overflow-hidden rounded-2xl bg-white py-2 shadow-xl ring-1 ring-line">
+          <Link to="/my-orders" onClick={() => setOpen(false)} className="flex items-center gap-3 px-4 py-3 font-semibold hover:bg-primary-soft">
+            <ClipboardList className="size-5 text-primary" aria-hidden="true" /> My orders
+          </Link>
+          <button type="button" onClick={logout} className="flex w-full items-center gap-3 px-4 py-3 text-left font-semibold hover:bg-primary-soft">
+            <LogOut className="size-5 text-primary" aria-hidden="true" /> Sign out
+          </button>
         </div>
       )}
-    </nav>
+    </div>
+  );
+};
+
+const Navbar = () => {
+  const { getCartCount, getCartTotalAmount, largeText, toggleLargeText } = useAppContext();
+  const { pathname } = useLocation();
+  const count = getCartCount();
+
+  return (
+    <header className="sticky top-0 z-40 bg-white/95 shadow-[0_1px_0_#e2e6dd] backdrop-blur">
+      {/* Service strip */}
+      <div className="bg-primary-deep text-sm text-white">
+        <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-2 sm:px-6 lg:px-8">
+          <p className="flex items-center gap-2 font-semibold">
+            <Truck className="size-4 shrink-0" aria-hidden="true" />
+            <span>Free delivery on orders over {formatPrice(FREE_DELIVERY_FROM)}</span>
+          </p>
+          <div className="flex items-center gap-4">
+            <a href={phoneLink()} className="hidden items-center gap-2 font-semibold hover:underline md:flex">
+              <Phone className="size-4" aria-hidden="true" /> Call to order: {STORE.phoneDisplay}
+            </a>
+            <button
+              type="button"
+              onClick={toggleLargeText}
+              aria-pressed={largeText}
+              className="flex items-center gap-1.5 rounded-lg bg-white/10 px-2.5 py-1 font-bold hover:bg-white/20"
+            >
+              <ALargeSmall className="size-4" aria-hidden="true" />
+              {largeText ? "Normal text" : "Larger text"}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Main bar */}
+      <div className="mx-auto flex max-w-7xl items-center gap-4 px-4 py-3 sm:px-6 lg:px-8">
+        <Link to="/" aria-label={`${STORE.name} home`} className="shrink-0">
+          <Logo />
+        </Link>
+
+        <SearchForm className="mx-2 hidden flex-1 md:flex" />
+
+        <div className="ml-auto flex items-center gap-2">
+          <div className="hidden md:block">
+            <AccountMenu />
+          </div>
+          <Link
+            to="/cart"
+            className="relative flex h-12 items-center gap-2 rounded-2xl bg-primary px-4 font-bold text-white hover:bg-primary-dull"
+          >
+            <ShoppingBasket className="size-6" aria-hidden="true" />
+            <span className="hidden sm:inline">Basket</span>
+            {count > 0 && <span className="hidden lg:inline">· {formatPrice(getCartTotalAmount())}</span>}
+            <span className="grid min-w-7 place-items-center rounded-full bg-white px-1.5 text-sm font-extrabold text-primary" aria-label={`${count} items`}>
+              {count}
+            </span>
+          </Link>
+        </div>
+      </div>
+
+      {/* Mobile search */}
+      {pathname !== "/cart" && (
+        <div className="px-4 pb-3 md:hidden">
+          <SearchForm />
+        </div>
+      )}
+
+      {/* Desktop links */}
+      <nav aria-label="Main" className="hidden border-t border-line md:block">
+        <ul className="no-scrollbar mx-auto flex max-w-7xl gap-1 overflow-x-auto px-4 sm:px-6 lg:px-8">
+          {links.map((link) => (
+            <li key={link.to}>
+              <NavLink
+                to={link.to}
+                end={link.to === "/"}
+                className={({ isActive }) =>
+                  `block whitespace-nowrap border-b-4 px-3 py-3 font-bold transition ${
+                    isActive ? "border-primary text-primary" : "border-transparent text-ink hover:text-primary"
+                  }`
+                }
+              >
+                {link.label}
+              </NavLink>
+            </li>
+          ))}
+        </ul>
+      </nav>
+    </header>
   );
 };
 
