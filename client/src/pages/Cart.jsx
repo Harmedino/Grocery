@@ -29,10 +29,10 @@ const Cart = () => {
     let tempArray = [];
     for (const key in cartItems){
         const product = products.find((item)=> item._id === key);
-        product.quantity = cartItems[key]
-        tempArray.push(product)
-        setCartArray(tempArray)
+        if (!product) continue; // product was removed from the catalog
+        tempArray.push({ ...product, quantity: cartItems[key] })
     }
+    setCartArray(tempArray)
    }
 
    useEffect(()=>{

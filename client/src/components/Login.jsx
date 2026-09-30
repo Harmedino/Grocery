@@ -5,7 +5,7 @@ import { assets } from "../assets/assets";
 import toast from "react-hot-toast";
 
 const Login = () => {
-    const {setShowUserLogin, setUser, axios, navigate}  = useAppContext()
+    const {setShowUserLogin, loginUser, axios, navigate}  = useAppContext()
 ;    const [state, setState] = React.useState("login");
     const [name, setName] = React.useState("");
     const [email, setEmail] = React.useState("");
@@ -19,7 +19,7 @@ const Login = () => {
           })
           if(data.success){
             navigate('/')
-            setUser(data.user)
+            loginUser(data.user)
             setShowUserLogin(false)
           }else{
             toast.error(data.message)

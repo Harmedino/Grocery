@@ -7,7 +7,7 @@ import toast from "react-hot-toast";
 const Navbar = () => {
   const [open, setOpen] = React.useState(false);
 
-  const { user,axios, setUser, setShowUserLogin, navigate,  setSearchQuery, searchQuery, getCartCount } = useAppContext();
+  const { user,axios, logoutUser, setShowUserLogin, navigate,  setSearchQuery, searchQuery, getCartCount } = useAppContext();
 
   useEffect(() => {
     if(searchQuery.length >0){
@@ -19,7 +19,7 @@ const Navbar = () => {
       const {data}= await axios.get('api/user/logout')
       if(data.success){
         toast.success(data.message)
-        setUser(null);
+        logoutUser();
         navigate("/");
       }else{
           toast.error(data.message)
