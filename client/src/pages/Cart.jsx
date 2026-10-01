@@ -11,7 +11,7 @@ import WhatsAppIcon from "../components/WhatsAppIcon";
 
 const StepTitle = ({ n, children }) => (
   <h2 className="flex items-center gap-3 text-xl font-extrabold">
-    <span className="grid size-9 place-items-center rounded-full bg-primary text-base text-white">{n}</span>
+    <span className="grid size-9 place-items-center rounded-full text-base border-2 border-ink bg-sun text-ink">{n}</span>
     {children}
   </h2>
 );
@@ -99,16 +99,16 @@ const Cart = () => {
   };
 
   if (productsLoading) {
-    return <div className="mt-10 h-96 animate-pulse rounded-3xl bg-white ring-1 ring-line" />;
+    return <div className="card-pop mt-10 h-96 animate-pulse" />;
   }
 
   if (cartLines.length === 0) {
     return (
-      <div className="mx-auto mt-10 max-w-xl rounded-[2rem] bg-white px-6 py-14 text-center ring-1 ring-line">
+      <div className="card-pop mx-auto mt-10 max-w-xl px-6 py-14 text-center">
         <img src="/images/scenes/cart.webp" alt="" className="mx-auto size-28" />
         <h1 className="mt-6 text-3xl font-extrabold">Your basket is empty</h1>
         <p className="mt-2 text-lg text-muted">Tap “Add to basket” on anything you want, and it will show here.</p>
-        <Link to="/products" className="mt-8 inline-flex h-14 items-center rounded-2xl bg-primary px-8 text-lg font-extrabold text-white hover:bg-primary-dull">
+        <Link to="/products" className="btn btn-sun mt-8 h-14 px-8 text-lg">
           Start shopping
         </Link>
       </div>
@@ -128,24 +128,24 @@ const Cart = () => {
       <div className="mt-6 grid grid-cols-[minmax(0,1fr)] gap-6 lg:grid-cols-[minmax(0,1fr)_420px] lg:items-start">
         {/* Items */}
         <section aria-label="Items in your basket" className="space-y-4">
-          <div className="rounded-2xl bg-white p-4 ring-1 ring-line">
+          <div className="card-pop p-4">
             {toFreeDelivery > 0 ? (
               <p className="font-bold">
                 Add <span className="text-primary">{formatPrice(toFreeDelivery)}</span> more to get <span className="text-primary">free delivery</span>
               </p>
             ) : (
-              <p className="font-bold text-primary">🎉 You get free delivery on this order</p>
+              <p className="font-bold text-accent">🎉 You get free delivery on this order</p>
             )}
-            <div className="mt-3 h-3 overflow-hidden rounded-full bg-primary-soft">
-              <div className="h-full rounded-full bg-primary transition-all" style={{ width: `${Math.min(100, (subtotal / FREE_DELIVERY_FROM) * 100)}%` }} />
+            <div className="mt-3 h-4 overflow-hidden rounded-full border-2 border-ink bg-white">
+              <div className="h-full rounded-full bg-sun transition-all" style={{ width: `${Math.min(100, (subtotal / FREE_DELIVERY_FROM) * 100)}%` }} />
             </div>
           </div>
 
-          <ul className="divide-y divide-line overflow-hidden rounded-2xl bg-white ring-1 ring-line">
+          <ul className="card-pop divide-y divide-line overflow-hidden">
             {cartLines.map(({ product, quantity }) => (
               <li key={product._id} className="flex flex-col gap-3 p-4 sm:flex-row sm:items-center">
                 <div className="flex min-w-0 flex-1 gap-4">
-                  <Link to={productUrl(product)} className="grid size-20 shrink-0 place-items-center rounded-xl sm:size-24" style={{ backgroundColor: categoryTint(product.category) }}>
+                  <Link to={productUrl(product)} className="grid size-20 shrink-0 place-items-center rounded-2xl border-2 border-ink sm:size-24" style={{ backgroundColor: categoryTint(product.category) }}>
                     <img src={product.images?.[0]} alt="" className="size-[70%] object-contain mix-blend-multiply" />
                   </Link>
                   <div className="min-w-0 flex-1">
@@ -162,7 +162,7 @@ const Cart = () => {
                   <button
                     type="button"
                     onClick={() => updateCartItems(product._id, 0)}
-                    className="flex h-12 items-center gap-1.5 rounded-xl px-3 font-bold text-accent hover:bg-accent-soft"
+                    className="flex h-12 items-center gap-1.5 rounded-full px-3 font-extrabold text-primary hover:bg-primary-soft"
                   >
                     <Trash className="size-5" aria-hidden="true" /> Remove
                   </button>
@@ -174,17 +174,17 @@ const Cart = () => {
 
         {/* Checkout */}
         <aside className="space-y-4 lg:sticky lg:top-44">
-          <section className="rounded-2xl bg-white p-5 ring-1 ring-line">
+          <section className="card-pop p-5">
             <StepTitle n={1}>Where should we deliver?</StepTitle>
             {!user ? (
               <div className="mt-4">
                 <p className="text-muted">Sign in or create an account so we know where to bring your order.</p>
-                <button type="button" onClick={() => setShowUserLogin(true)} className="mt-3 h-12 w-full rounded-xl bg-primary font-bold text-white hover:bg-primary-dull">
+                <button type="button" onClick={() => setShowUserLogin(true)} className="btn btn-sun mt-3 h-12 w-full">
                   Sign in to continue
                 </button>
               </div>
             ) : addresses.length === 0 ? (
-              <Link to="/add-address" className="mt-4 flex h-14 items-center justify-center gap-2 rounded-xl border-2 border-dashed border-primary/40 font-bold text-primary hover:bg-primary-soft">
+              <Link to="/add-address" className="mt-4 flex h-14 items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-ink/50 font-extrabold text-ink hover:bg-sun-soft">
                 <Plus className="size-5" aria-hidden="true" /> Add delivery address
               </Link>
             ) : (
@@ -193,9 +193,9 @@ const Cart = () => {
                 {addresses.map((a) => (
                   <label
                     key={a._id}
-                    className={`flex cursor-pointer gap-3 rounded-xl p-3 ring-2 ${selectedAddress?._id === a._id ? "bg-primary-soft ring-primary" : "ring-line"}`}
+                    className={`flex cursor-pointer gap-3 rounded-2xl border-2 p-3 ${selectedAddress?._id === a._id ? "border-ink bg-sun-soft" : "border-line"}`}
                   >
-                    <input type="radio" name="address" className="mt-1 size-5 accent-[#15803d]" checked={selectedAddress?._id === a._id} onChange={() => setSelectedAddress(a)} />
+                    <input type="radio" name="address" className="mt-1 size-5 accent-[#c9381a]" checked={selectedAddress?._id === a._id} onChange={() => setSelectedAddress(a)} />
                     <span>
                       <span className="flex items-center gap-1.5 font-bold"><MapPin className="size-4" aria-hidden="true" /> {a.firstName} {a.lastName}</span>
                       <span className="block text-muted">{formatAddress(a)}</span>
@@ -210,7 +210,7 @@ const Cart = () => {
             )}
           </section>
 
-          <section className="rounded-2xl bg-white p-5 ring-1 ring-line">
+          <section className="card-pop p-5">
             <StepTitle n={2}>How will you pay?</StepTitle>
             <fieldset className="mt-4 space-y-2">
               <legend className="sr-only">Payment method</legend>
@@ -218,8 +218,8 @@ const Cart = () => {
                 { value: "COD", Icon: Wallet, title: "Pay on delivery", text: "Cash or bank transfer when your order arrives" },
                 { value: "Online", Icon: CreditCard, title: "Pay online now", text: "Pay with your bank card" },
               ].map((option) => (
-                <label key={option.value} className={`flex cursor-pointer gap-3 rounded-xl p-3 ring-2 ${paymentOption === option.value ? "bg-primary-soft ring-primary" : "ring-line"}`}>
-                  <input type="radio" name="payment" className="mt-1 size-5 accent-[#15803d]" checked={paymentOption === option.value} onChange={() => setPaymentOption(option.value)} />
+                <label key={option.value} className={`flex cursor-pointer gap-3 rounded-2xl border-2 p-3 ${paymentOption === option.value ? "border-ink bg-sun-soft" : "border-line"}`}>
+                  <input type="radio" name="payment" className="mt-1 size-5 accent-[#c9381a]" checked={paymentOption === option.value} onChange={() => setPaymentOption(option.value)} />
                   <span>
                     <span className="flex items-center gap-1.5 font-bold"><option.Icon className="size-4" aria-hidden="true" /> {option.title}</span>
                     <span className="block text-muted">{option.text}</span>
@@ -229,13 +229,13 @@ const Cart = () => {
             </fieldset>
           </section>
 
-          <section className="rounded-2xl bg-white p-5 ring-1 ring-line">
+          <section className="card-pop p-5">
             <StepTitle n={3}>Check and place order</StepTitle>
             <dl className="mt-4 space-y-2 text-lg">
               <div className="flex justify-between"><dt className="text-muted">Items</dt><dd className="font-bold">{formatPrice(subtotal)}</dd></div>
               <div className="flex justify-between">
                 <dt className="text-muted">Delivery</dt>
-                <dd className={`font-bold ${deliveryFee ? "" : "text-primary"}`}>{deliveryFee ? formatPrice(deliveryFee) : "Free"}</dd>
+                <dd className={`font-bold ${deliveryFee ? "" : "text-accent"}`}>{deliveryFee ? formatPrice(deliveryFee) : "Free"}</dd>
               </div>
               <div className="flex justify-between border-t border-line pt-3 text-2xl">
                 <dt className="font-extrabold">Total</dt><dd className="font-extrabold">{formatPrice(total)}</dd>
@@ -245,7 +245,7 @@ const Cart = () => {
               type="button"
               onClick={placeOrder}
               disabled={placing}
-              className="mt-5 h-16 w-full rounded-2xl bg-primary text-xl font-extrabold text-white shadow-lg shadow-primary/25 hover:bg-primary-dull disabled:opacity-60"
+              className="btn btn-red mt-5 h-16 w-full text-xl disabled:opacity-60"
             >
               {placing ? "Placing your order..." : !user ? "Sign in to order" : paymentOption === "COD" ? `Place order · ${formatPrice(total)}` : `Pay ${formatPrice(total)} now`}
             </button>
@@ -256,7 +256,7 @@ const Cart = () => {
               href={whatsappOrder()}
               target="_blank"
               rel="noreferrer"
-              className="flex h-14 w-full items-center justify-center gap-2 rounded-2xl bg-[#25D366] text-lg font-extrabold text-[#08361c] hover:brightness-95"
+              className="btn btn-wa h-14 w-full text-lg"
             >
               <WhatsAppIcon className="size-6" /> Send this order on WhatsApp
             </a>

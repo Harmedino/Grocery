@@ -1,35 +1,43 @@
-@import "@fontsource-variable/figtree";
+@import "@fontsource-variable/nunito";
+@import "@fontsource-variable/bricolage-grotesque";
 @import "tailwindcss";
 
+/* "Market poster" look: warm cream paper, cocoa outlines, tomato and sun-yellow */
 @theme {
-  --font-sans: "Figtree Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Nunito Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Bricolage Grotesque Variable", "Nunito Variable", ui-sans-serif, sans-serif;
 
-  --color-primary: #15803d;
-  --color-primary-dull: #166534;
-  --color-primary-deep: #0f3d26;
-  --color-primary-soft: #eaf7ee;
-  --color-accent: #c2410c;
-  --color-accent-soft: #fff1e8;
-  --color-ink: #14201a;
-  --color-muted: #4a5750;
-  --color-canvas: #f5f6f1;
-  --color-line: #e2e6dd;
+  --color-primary: #c9381a;
+  --color-primary-dull: #a52c11;
+  --color-primary-deep: #24170e;
+  --color-primary-soft: #ffe7da;
+  --color-accent: #2f7a3a;
+  --color-accent-soft: #e3f2df;
+  --color-sun: #ffc533;
+  --color-sun-soft: #fff2c9;
+  --color-ink: #24170e;
+  --color-muted: #65564a;
+  --color-canvas: #fff8ec;
+  --color-line: #eddcc4;
 
   --animate-float: float 6s ease-in-out infinite;
+  --animate-wiggle: wiggle 0.5s ease-in-out;
 
   @keyframes float {
     0%, 100% { transform: translateY(0); }
     50% { transform: translateY(-10px); }
   }
+  @keyframes wiggle {
+    0%, 100% { transform: rotate(0); }
+    30% { transform: rotate(-6deg); }
+    60% { transform: rotate(5deg); }
+  }
 }
 
-/* Larger base size for easy reading; "Larger text" bumps it further */
+/* Larger base size for easy reading */
 html {
   font-size: 18px;
   -webkit-text-size-adjust: 100%;
-}
-html.large-text {
-  font-size: 21px;
 }
 
 body {
@@ -38,11 +46,94 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+@layer base {
+  h1, h2, h3 {
+    font-family: var(--font-display);
+    letter-spacing: -0.015em;
+  }
+}
+
 /* Strong, visible focus for keyboard users */
 :focus-visible {
-  outline: 3px solid #f59e0b;
-  outline-offset: 2px;
-  border-radius: 6px;
+  outline: 3px solid var(--color-primary);
+  outline-offset: 3px;
+  border-radius: 8px;
+}
+
+@layer components {
+  /* Chunky "press" buttons: cocoa outline + hard shadow that sinks when tapped */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border: 2px solid var(--color-ink);
+    border-radius: 1rem;
+    font-weight: 800;
+    color: var(--color-ink);
+    background: #fff;
+    box-shadow: 0 4px 0 0 var(--color-ink);
+    transition: transform 0.12s ease, box-shadow 0.12s ease, background-color 0.12s ease;
+  }
+  .btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 5px 0 0 var(--color-ink);
+  }
+  .btn:active {
+    transform: translateY(4px);
+    box-shadow: 0 0 0 0 var(--color-ink);
+  }
+  .btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: 0 4px 0 0 var(--color-ink);
+  }
+  .btn-sun {
+    background: var(--color-sun);
+  }
+  .btn-sun:hover {
+    background: #ffd05a;
+  }
+  .btn-red {
+    background: var(--color-primary);
+    color: #fff;
+  }
+  .btn-red:hover {
+    background: var(--color-primary-dull);
+  }
+  .btn-white:hover {
+    background: var(--color-sun-soft);
+  }
+  .btn-wa {
+    background: #25d366;
+    color: #06311a;
+  }
+  .btn-wa:hover {
+    background: #3be07a;
+  }
+
+  /* Outlined "poster" card */
+  .card-pop {
+    background: #fff;
+    border: 2px solid var(--color-ink);
+    border-radius: 1.75rem;
+  }
+  .shadow-pop {
+    box-shadow: 6px 6px 0 0 var(--color-ink);
+  }
+
+  /* Tilted label, like a price sticker at the market */
+  .sticker {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    border: 2px solid var(--color-ink);
+    border-radius: 9999px;
+    background: #fff;
+    font-weight: 800;
+    box-shadow: 0 3px 0 0 var(--color-ink);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

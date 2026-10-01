@@ -13,11 +13,11 @@ const Deals = () => {
 
   return (
     <div className="pt-6 md:pt-10">
-      <section className="relative overflow-hidden rounded-[2rem] bg-accent-soft p-6 ring-1 ring-accent/15 sm:p-10">
-        <img src="/images/scenes/party.webp" alt="" aria-hidden="true" className="absolute -right-4 -top-4 w-32 opacity-90 sm:w-44" />
-        <p className="font-extrabold uppercase tracking-widest text-accent">Today's deals</p>
-        <h1 className="mt-2 max-w-2xl text-3xl font-extrabold tracking-tight sm:text-5xl">Save on everyday essentials</h1>
-        <p className="mt-3 max-w-xl text-lg text-muted">
+      <section className="card-pop shadow-pop relative overflow-hidden bg-sun p-6 sm:p-10">
+        <img src="/images/scenes/party.webp" alt="" aria-hidden="true" className="absolute -right-4 -top-4 w-32 rotate-12 sm:w-44" />
+        <p className="sticker -rotate-2 bg-primary px-4 py-1 text-white">Today's deals</p>
+        <h1 className="mt-4 max-w-2xl text-4xl font-extrabold sm:text-6xl">Save on everyday essentials</h1>
+        <p className="mt-3 max-w-xl text-lg font-semibold text-ink/80">
           {biggest
             ? `Up to ${discountPercent(biggest)}% off. For example, ${biggest.name} is now ${formatPrice(biggest.offerPrice)}.`
             : "Fresh savings every day."}

@@ -12,7 +12,7 @@ const LABELS = { "Order Placed": "Placed", Packing: "Packing", "Out for delivery
 
 const Tracker = ({ status }) => {
   if (status === "Cancelled") {
-    return <p className="rounded-xl bg-accent-soft px-4 py-3 font-bold text-accent">This order was cancelled.</p>;
+    return <p className="rounded-2xl bg-primary-soft px-4 py-3 font-bold text-primary-dull">This order was cancelled.</p>;
   }
   const reached = Math.max(0, TRACK.indexOf(status));
   return (
@@ -20,11 +20,11 @@ const Tracker = ({ status }) => {
       {TRACK.map((step, i) => (
         <li key={step} className="flex flex-col items-center gap-1.5 text-center">
           <div className="flex w-full items-center">
-            <span className={`h-1 flex-1 ${i === 0 ? "invisible" : i <= reached ? "bg-primary" : "bg-line"}`} />
-            <span className={`grid size-9 shrink-0 place-items-center rounded-full font-extrabold ${i <= reached ? "bg-primary text-white" : "bg-line text-muted"}`}>
+            <span className={`h-1 flex-1 ${i === 0 ? "invisible" : i <= reached ? "bg-accent" : "bg-line"}`} />
+            <span className={`grid size-9 shrink-0 place-items-center rounded-full font-extrabold ${i <= reached ? "border-2 border-ink bg-sun text-ink" : "bg-line text-muted"}`}>
               {i < reached || status === "Delivered" ? <Check className="size-5" strokeWidth={3} aria-hidden="true" /> : i + 1}
             </span>
-            <span className={`h-1 flex-1 ${i === TRACK.length - 1 ? "invisible" : i < reached ? "bg-primary" : "bg-line"}`} />
+            <span className={`h-1 flex-1 ${i === TRACK.length - 1 ? "invisible" : i < reached ? "bg-accent" : "bg-line"}`} />
           </div>
           <span className={`text-sm font-bold ${i <= reached ? "text-ink" : "text-muted"}`}>{LABELS[step]}</span>
         </li>
@@ -57,11 +57,11 @@ const MyOrders = () => {
 
   if (!user) {
     return (
-      <div className="mx-auto mt-10 max-w-xl rounded-[2rem] bg-white px-6 py-14 text-center ring-1 ring-line">
+      <div className="card-pop mx-auto mt-10 max-w-xl px-6 py-14 text-center">
         <img src="/images/scenes/package.webp" alt="" className="mx-auto size-24" />
         <h1 className="mt-6 text-3xl font-extrabold">See your orders</h1>
         <p className="mt-2 text-lg text-muted">Sign in to see what you ordered and where it is.</p>
-        <button type="button" onClick={() => setShowUserLogin(true)} className="mt-8 h-14 rounded-2xl bg-primary px-8 text-lg font-extrabold text-white hover:bg-primary-dull">
+        <button type="button" onClick={() => setShowUserLogin(true)} className="btn btn-sun mt-8 h-14 px-8 text-lg">
           Sign in
         </button>
       </div>
@@ -71,7 +71,7 @@ const MyOrders = () => {
   return (
     <div className="pt-6 md:pt-10">
       {justPlaced && (
-        <div className="mb-6 flex flex-col items-center gap-4 rounded-[2rem] bg-primary-soft p-6 text-center ring-1 ring-primary/20 sm:flex-row sm:text-left">
+        <div className="card-pop mb-6 flex flex-col items-center gap-4 bg-sun-soft p-6 text-center sm:flex-row sm:text-left">
           <img src="/images/scenes/party.webp" alt="" className="size-20" />
           <div>
             <h2 className="text-2xl font-extrabold text-primary-deep">Thank you! Your order has been placed.</h2>
@@ -83,18 +83,18 @@ const MyOrders = () => {
       <h1 className="text-3xl font-extrabold tracking-tight sm:text-4xl">My orders</h1>
 
       {loading ? (
-        <div className="mt-6 h-64 animate-pulse rounded-3xl bg-white ring-1 ring-line" />
+        <div className="card-pop mt-6 h-64 animate-pulse" />
       ) : orders.length === 0 ? (
-        <div className="mt-6 rounded-[2rem] bg-white px-6 py-14 text-center ring-1 ring-line">
+        <div className="card-pop mt-6 px-6 py-14 text-center">
           <img src="/images/scenes/package.webp" alt="" className="mx-auto size-24" />
           <h2 className="mt-6 text-2xl font-extrabold">No orders yet</h2>
           <p className="mt-2 text-lg text-muted">When you place an order, you can follow it here.</p>
-          <Link to="/products" className="mt-8 inline-flex h-14 items-center rounded-2xl bg-primary px-8 text-lg font-extrabold text-white">Start shopping</Link>
+          <Link to="/products" className="btn btn-sun mt-8 h-14 px-8 text-lg">Start shopping</Link>
         </div>
       ) : (
         <ul className="mt-6 space-y-6">
           {orders.map((order) => (
-            <li key={order._id} className="overflow-hidden rounded-[2rem] bg-white ring-1 ring-line">
+            <li key={order._id} className="card-pop overflow-hidden">
               <div className="flex flex-wrap items-center justify-between gap-3 border-b border-line bg-canvas/60 px-5 py-4">
                 <div>
                   <p className="text-sm font-bold uppercase tracking-wider text-muted">Order #{order._id.slice(-6).toUpperCase()}</p>
@@ -102,7 +102,7 @@ const MyOrders = () => {
                     {new Date(order.createdAt).toLocaleDateString("en-NG", { weekday: "long", day: "numeric", month: "long" })}
                   </p>
                 </div>
-                <span className={`rounded-full px-3 py-1 font-bold ${order.isPaid ? "bg-primary-soft text-primary-dull" : "bg-accent-soft text-accent"}`}>
+                <span className={`rounded-full px-3 py-1 font-bold ${order.isPaid ? "bg-accent-soft text-accent" : "bg-sun-soft text-ink"}`}>
                   {order.isPaid ? "Paid" : order.paymentType === "COD" ? "Pay on delivery" : "Awaiting payment"}
                 </span>
               </div>
@@ -115,7 +115,7 @@ const MyOrders = () => {
                     <li key={item._id || i} className="flex items-center gap-4 py-3">
                       {item.product ? (
                         <>
-                          <img src={item.product.images?.[0]} alt="" className="size-14 shrink-0 rounded-xl bg-canvas object-contain p-1.5" />
+                          <img src={item.product.images?.[0]} alt="" className="size-14 shrink-0 rounded-2xl bg-canvas object-contain p-1.5" />
                           <div className="min-w-0 flex-1">
                             <p className="font-bold">{item.product.name}</p>
                             <p className="text-muted">{item.product.unit} · Quantity {item.quantity}</p>
@@ -137,14 +137,14 @@ const MyOrders = () => {
                 </div>
 
                 <div className="mt-5 flex flex-col gap-2 sm:flex-row">
-                  <a href={phoneLink()} className="flex h-12 items-center justify-center gap-2 rounded-xl px-4 font-bold ring-1 ring-line hover:bg-primary-soft">
+                  <a href={phoneLink()} className="btn btn-white h-12 px-4">
                     <Phone className="size-5" aria-hidden="true" /> Call about this order
                   </a>
                   <a
                     href={whatsappLink(`Hello ${STORE.name}, I have a question about order #${order._id.slice(-6).toUpperCase()}.`)}
                     target="_blank"
                     rel="noreferrer"
-                    className="flex h-12 items-center justify-center gap-2 rounded-xl px-4 font-bold ring-1 ring-line hover:bg-primary-soft"
+                    className="btn btn-white h-12 px-4"
                   >
                     <WhatsAppIcon className="size-5 text-[#1ea952]" /> WhatsApp us
                   </a>

@@ -38,39 +38,36 @@ const Home = () => {
   return (
     <div className="space-y-14 pt-4 md:space-y-20 md:pt-8">
       {/* Hero */}
-      <section className="grid items-center gap-6 overflow-hidden rounded-[2rem] bg-white p-6 ring-1 ring-line sm:p-10 lg:grid-cols-2 lg:gap-10 lg:p-14">
+      <section className="card-pop shadow-pop grid items-center gap-6 overflow-hidden bg-sun p-6 sm:p-10 lg:grid-cols-2 lg:gap-10 lg:p-14">
         <div>
-          <p className="inline-flex items-center gap-2 rounded-full bg-primary-soft px-4 py-1.5 font-bold text-primary-dull">
+          <p className="sticker -rotate-2 px-4 py-1.5">
             <img src="/images/scenes/scooter.webp" alt="" aria-hidden="true" className="size-6" />
             Delivering across {STORE.city} today
           </p>
-          <h1 className="mt-5 text-4xl font-extrabold leading-[1.05] tracking-tight text-ink sm:text-5xl xl:text-6xl">
-            Fresh groceries, delivered to your door.
+          <h1 className="mt-6 text-[2.6rem] font-extrabold leading-[1.02] text-ink sm:text-6xl xl:text-[4.1rem]">
+            Fresh groceries, <span className="relative whitespace-nowrap text-primary">delivered</span> to your door.
           </h1>
-          <p className="mt-5 max-w-xl text-lg text-muted sm:text-xl">
+          <p className="mt-5 max-w-xl text-lg font-semibold text-ink/80 sm:text-xl">
             Rice, beans, fresh pepper, meat, drinks and more. Order in a few taps and pay when it arrives.
           </p>
-          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-            <Link
-              to="/products"
-              className="flex h-14 items-center justify-center gap-2 rounded-2xl bg-primary px-8 text-lg font-extrabold text-white shadow-lg shadow-primary/25 hover:bg-primary-dull"
-            >
-              Start shopping <ArrowRight className="size-5" aria-hidden="true" />
+          <div className="mt-8 flex flex-col gap-4 sm:flex-row">
+            <Link to="/products" className="btn btn-red h-15 px-8 text-lg">
+              Start shopping <ArrowRight className="size-5" strokeWidth={2.8} aria-hidden="true" />
             </Link>
             <a
               href={whatsappLink(`Hello ${STORE.name}, I would like to place an order.`)}
               target="_blank"
               rel="noreferrer"
-              className="flex h-14 items-center justify-center gap-2 rounded-2xl px-6 text-lg font-extrabold text-ink ring-2 ring-line hover:bg-primary-soft"
+              className="btn btn-white h-15 px-6 text-lg"
             >
               <WhatsAppIcon className="size-6 text-[#1ea952]" /> Order on WhatsApp
             </a>
           </div>
-          <ul className="mt-8 grid gap-2 text-base font-semibold text-ink sm:grid-cols-3">
+          <ul className="mt-8 flex flex-wrap gap-2 text-base font-extrabold text-ink">
             {["Pay on delivery", "No hidden charges", "Carefully packed"].map((t) => (
-              <li key={t} className="flex items-center gap-2">
-                <span className="grid size-6 place-items-center rounded-full bg-primary text-white">
-                  <Check className="size-4" strokeWidth={3} aria-hidden="true" />
+              <li key={t} className="flex items-center gap-2 rounded-full border-2 border-ink bg-white/60 py-1 pl-1 pr-3">
+                <span className="grid size-6 place-items-center rounded-full bg-accent text-white">
+                  <Check className="size-4" strokeWidth={3.5} aria-hidden="true" />
                 </span>
                 {t}
               </li>
@@ -81,12 +78,14 @@ const Home = () => {
       </section>
 
       {/* Promises */}
-      <section aria-label="Why shop with us" className="grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-4">
+      <section aria-label="Why shop with us" className="grid grid-cols-2 gap-4 md:grid-cols-4">
         {promises.map((p) => (
-          <div key={p.title} className="flex flex-col items-start gap-3 rounded-2xl bg-white p-4 ring-1 ring-line sm:flex-row sm:items-center sm:p-5">
-            <img src={`/images/scenes/${p.image}.webp`} alt="" aria-hidden="true" className="size-14 shrink-0" />
+          <div key={p.title} className="card-pop flex flex-col items-start gap-3 p-4 sm:flex-row sm:items-center sm:p-5">
+            <span className="grid size-16 shrink-0 place-items-center rounded-full border-2 border-ink bg-sun-soft">
+              <img src={`/images/scenes/${p.image}.webp`} alt="" aria-hidden="true" className="size-11" />
+            </span>
             <div>
-              <h3 className="font-extrabold leading-tight">{p.title}</h3>
+              <h3 className="text-lg font-extrabold leading-tight">{p.title}</h3>
               <p className="mt-0.5 text-muted">{p.text}</p>
             </div>
           </div>
@@ -99,11 +98,11 @@ const Home = () => {
       </section>
 
       {/* Pay on delivery */}
-      <section className="grid items-center gap-8 rounded-[2rem] bg-white p-6 ring-1 ring-line sm:p-10 lg:grid-cols-2 lg:p-14">
+      <section className="card-pop grid items-center gap-8 p-6 sm:p-10 lg:grid-cols-2 lg:p-14">
         <PayOnDeliveryScene />
         <div>
-          <p className="font-extrabold uppercase tracking-widest text-accent">No card needed</p>
-          <h2 className="mt-2 text-3xl font-extrabold tracking-tight md:text-4xl">Pay when your order arrives</h2>
+          <p className="sticker rotate-2 bg-sun px-4 py-1">No card needed</p>
+          <h2 className="mt-4 text-4xl font-extrabold md:text-5xl">Pay when your order arrives</h2>
           <p className="mt-4 text-lg text-muted">
             You do not pay anything online. When the rider gets to your door, check your items first, then pay the way you like.
           </p>
@@ -114,14 +113,14 @@ const Home = () => {
               ["Check first", "Make sure everything is complete and fresh before you pay."],
             ].map(([title, text]) => (
               <li key={title} className="flex gap-3">
-                <span className="mt-1 grid size-7 shrink-0 place-items-center rounded-full bg-primary text-white">
+                <span className="mt-1 grid size-7 shrink-0 place-items-center rounded-full bg-accent text-white">
                   <Check className="size-4" strokeWidth={3} aria-hidden="true" />
                 </span>
                 <span><strong>{title}.</strong> {text}</span>
               </li>
             ))}
           </ul>
-          <Link to="/products" className="mt-8 inline-flex h-14 items-center gap-2 rounded-2xl bg-primary px-8 text-lg font-extrabold text-white hover:bg-primary-dull">
+          <Link to="/products" className="btn btn-sun mt-8 h-14 px-8 text-lg">
             Start shopping <ArrowRight className="size-5" aria-hidden="true" />
           </Link>
         </div>
@@ -135,15 +134,15 @@ const Home = () => {
       {/* How it works */}
       <section>
         <SectionHeader title="Ordering is easy" subtitle="Four simple steps. No card needed." linkTo="/help" linkText="Full guide" />
-        <ol className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <ol className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {steps.map((step, i) => (
-            <li key={step.title} className="rounded-3xl bg-white p-4 ring-1 ring-line">
+            <li key={step.title} className="card-pop relative p-3 pb-5">
+              <span className="font-display absolute -left-2 -top-3 z-10 grid size-12 -rotate-6 place-items-center rounded-full border-2 border-ink bg-sun text-2xl font-extrabold shadow-[0_3px_0_0_var(--color-ink)]">
+                {i + 1}
+              </span>
               <step.Scene />
-              <div className="mt-4 flex items-center gap-3">
-                <span className="grid size-10 shrink-0 place-items-center rounded-full bg-primary text-lg font-extrabold text-white">{i + 1}</span>
-                <h3 className="text-xl font-extrabold leading-tight">{step.title}</h3>
-              </div>
-              <p className="mt-2 text-muted">{step.text}</p>
+              <h3 className="mt-4 px-1 text-xl font-extrabold leading-tight">{step.title}</h3>
+              <p className="mt-2 px-1 text-muted">{step.text}</p>
             </li>
           ))}
         </ol>

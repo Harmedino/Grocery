@@ -8,7 +8,6 @@ axios.defaults.withCredentials = true;
 axios.defaults.baseURL = import.meta.env.VITE_BACKEND_URL;
 
 const CART_KEY = "cartItems";
-const TEXT_KEY = "largeText";
 
 // Local copy of the cart so it survives a refresh and a slow login check
 const loadLocalCart = () => {
@@ -41,13 +40,6 @@ export const AppContextProvider = ({ children }) => {
   const [products, setProducts] = useState([]);
   const [productsLoading, setProductsLoading] = useState(true);
   const [cartItems, setCartItems] = useState(loadLocalCart);
-  const [largeText, setLargeText] = useState(() => {
-    try {
-      return localStorage.getItem(TEXT_KEY) === "1";
-    } catch {
-      return false;
-    }
-  });
 
   const fetchSeller = async ()=>{
 try {
@@ -172,15 +164,6 @@ try {
   }, []);
 
   useEffect(() => {
-    document.documentElement.classList.toggle("large-text", largeText);
-    try {
-      localStorage.setItem(TEXT_KEY, largeText ? "1" : "0");
-    } catch {
-      // preference just won't persist
-    }
-  }, [largeText]);
-
-  useEffect(() => {
     try {
       localStorage.setItem(CART_KEY, JSON.stringify(cartItems));
     } catch {
@@ -234,8 +217,6 @@ try {
     productsLoading,
     cartItems,
     cartLines,
-    largeText,
-    toggleLargeText: () => setLargeText((v) => !v),
     currency,
     addToCart,
     updateCartItems,
