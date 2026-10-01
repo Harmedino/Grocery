@@ -2,17 +2,22 @@ import { NavLink } from "react-router-dom";
 import { CircleQuestionMark, House, LayoutGrid, ShoppingBasket, User } from "lucide-react";
 import { useAppContext } from "../contex/AppContex";
 
-// Always-visible labelled tabs on phones: no hidden menus to discover
+// Floating labelled dock on phones: no hidden menus to discover
 const BottomNav = () => {
   const { getCartCount, user, setShowUserLogin } = useAppContext();
   const count = getCartCount();
 
   const item = ({ isActive }) =>
-    `flex flex-1 flex-col items-center justify-center gap-0.5 py-2 text-xs font-bold ${isActive ? "text-primary" : "text-muted"}`;
+    `flex flex-1 flex-col items-center justify-center gap-0.5 rounded-full py-1.5 text-xs font-extrabold transition ${
+      isActive ? "bg-sun text-ink" : "text-muted"
+    }`;
 
   return (
-    <nav aria-label="Quick links" className="fixed inset-x-0 bottom-0 z-40 border-t border-line bg-white/95 pb-[env(safe-area-inset-bottom)] backdrop-blur md:hidden">
-      <div className="flex h-16">
+    <nav
+      aria-label="Quick links"
+      className="fixed inset-x-3 bottom-[max(0.75rem,env(safe-area-inset-bottom))] z-40 rounded-full border-2 border-ink bg-white p-1.5 shadow-[0_4px_0_0_var(--color-ink)] md:hidden"
+    >
+      <div className="flex h-14 gap-1">
         <NavLink to="/" end className={item}>
           <House className="size-6" aria-hidden="true" /> Home
         </NavLink>
@@ -23,7 +28,7 @@ const BottomNav = () => {
           <span className="relative">
             <ShoppingBasket className="size-6" aria-hidden="true" />
             {count > 0 && (
-              <span className="absolute -right-3 -top-2 grid min-w-5 place-items-center rounded-full bg-accent px-1 text-[0.7rem] text-white">
+              <span className="absolute -right-3 -top-2 grid min-w-5 place-items-center rounded-full border border-white bg-primary px-1 text-[0.7rem] text-white">
                 {count}
               </span>
             )}

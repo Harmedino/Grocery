@@ -10,7 +10,7 @@ const Field = ({ label, id, ...props }) => (
     <input
       id={id}
       {...props}
-      className="h-14 w-full rounded-xl bg-white px-4 text-lg outline-none ring-2 ring-line focus:ring-primary"
+      className="h-14 w-full rounded-2xl border-2 border-ink/60 bg-white px-4 text-lg outline-none focus:border-ink focus:ring-4 focus:ring-sun"
     />
   </div>
 );
@@ -52,7 +52,7 @@ const Login = () => {
         aria-modal="true"
         aria-labelledby="login-title"
         onClick={(e) => e.stopPropagation()}
-        className="relative max-h-[95vh] w-full max-w-md overflow-y-auto rounded-t-3xl bg-canvas p-6 shadow-2xl sm:rounded-3xl sm:p-8"
+        className="relative max-h-[95vh] w-full max-w-md overflow-y-auto rounded-t-[1.75rem] border-2 border-ink bg-canvas p-6 shadow-2xl sm:rounded-[1.75rem] sm:p-8"
       >
         <button
           type="button"
@@ -85,12 +85,12 @@ const Login = () => {
             required
           />
 
-          <button disabled={loading} className="h-14 w-full rounded-xl bg-primary text-lg font-extrabold text-white hover:bg-primary-dull disabled:opacity-60">
+          <button disabled={loading} className="btn btn-sun h-14 w-full text-lg disabled:opacity-60">
             {loading ? "Please wait..." : isRegister ? "Create account" : "Sign in"}
           </button>
         </form>
 
-        <div className="mt-6 rounded-2xl bg-white p-4 text-center ring-1 ring-line">
+        <div className="card-pop mt-6 p-4 text-center">
           {isRegister ? (
             <p>
               Already have an account?{" "}

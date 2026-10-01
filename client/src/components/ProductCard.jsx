@@ -11,54 +11,52 @@ const ProductCard = ({ product }) => {
   const inBasket = cartItems[product._id] > 0;
 
   return (
-    <article className="group flex h-full flex-col rounded-2xl bg-white p-3 ring-1 ring-line transition hover:-translate-y-0.5 hover:shadow-lg hover:ring-primary/30">
+    <article className="card-pop group relative flex h-full flex-col p-2.5 transition hover:-translate-y-1 hover:shadow-[0_6px_0_0_var(--color-ink)]">
+      {off > 0 && (
+        <span className="absolute -right-2 -top-3 z-10 grid size-14 rotate-12 place-items-center rounded-full border-2 border-ink bg-sun text-center font-display text-sm font-extrabold leading-none shadow-[0_3px_0_0_var(--color-ink)]">
+          -{off}%
+        </span>
+      )}
       <Link
         to={productUrl(product)}
         onClick={() => scrollTo(0, 0)}
-        className="relative grid aspect-square place-items-center overflow-hidden rounded-xl"
+        className="relative grid aspect-square place-items-center overflow-hidden rounded-[1.25rem]"
         style={{ backgroundColor: categoryTint(product.category) }}
       >
-        {off > 0 && (
-          <span className="absolute left-2 top-2 rounded-full bg-accent px-2.5 py-0.5 text-sm font-bold text-white">
-            {off}% off
-          </span>
-        )}
         <img
           src={product.images?.[0]}
           alt=""
           loading="lazy"
-          className="size-[68%] object-contain mix-blend-multiply transition duration-300 group-hover:scale-110"
+          className="size-[70%] object-contain mix-blend-multiply transition duration-300 group-hover:scale-110 group-hover:-rotate-3"
         />
       </Link>
 
-      <div className="mt-3 flex flex-1 flex-col">
-        {product.unit && <p className="text-sm font-semibold text-muted">{product.unit}</p>}
+      <div className="flex flex-1 flex-col px-1 pt-3">
         <Link
           to={productUrl(product)}
           onClick={() => scrollTo(0, 0)}
-          className="mt-0.5 line-clamp-2 font-bold leading-snug text-ink hover:text-primary"
+          className="line-clamp-2 text-[1.05rem] font-extrabold leading-snug text-ink hover:text-primary"
         >
           {product.name}
         </Link>
+        {product.unit && <p className="mt-0.5 text-sm font-bold text-muted">{product.unit}</p>}
 
         <div className="mt-2 flex flex-wrap items-baseline gap-x-2">
-          <span className="text-xl font-extrabold text-ink">{formatPrice(product.offerPrice)}</span>
-          {off > 0 && <s className="text-sm text-muted">{formatPrice(product.price)}</s>}
+          <span className="font-display text-2xl font-extrabold text-ink">{formatPrice(product.offerPrice)}</span>
+          {off > 0 && <s className="text-sm font-semibold text-muted">{formatPrice(product.price)}</s>}
         </div>
 
         <div className="mt-auto pt-3">
           {!product.inStock ? (
-            <p className="grid h-12 place-items-center rounded-xl bg-gray-100 font-bold text-muted">Out of stock</p>
+            <p className="grid h-12 place-items-center rounded-2xl border-2 border-dashed border-ink/30 font-extrabold text-muted">Out of stock</p>
           ) : inBasket ? (
             <QuantityStepper product={product} />
           ) : (
-            <button
-              type="button"
-              onClick={() => addToCart(product._id)}
-              className="flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-primary font-bold text-white transition hover:bg-primary-dull active:scale-[0.98]"
-            >
-              <Plus className="size-5" strokeWidth={3} aria-hidden="true" />
-              Add<span className="sr-only"> {product.name}</span> to basket
+            <button type="button" onClick={() => addToCart(product._id)} className="btn btn-sun h-12 w-full">
+              <Plus className="size-5" strokeWidth={3.2} aria-hidden="true" />
+              <span>
+                Add<span className="sr-only"> {product.name}</span> to basket
+              </span>
             </button>
           )}
         </div>

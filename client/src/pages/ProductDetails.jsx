@@ -23,7 +23,7 @@ const ProductDetails = () => {
   );
 
   if (productsLoading) {
-    return <div className="mt-10 h-96 animate-pulse rounded-3xl bg-white ring-1 ring-line" />;
+    return <div className="card-pop mt-10 h-96 animate-pulse" />;
   }
   if (!product) return <NotFound message="This product is no longer available." />;
 
@@ -38,11 +38,11 @@ const ProductDetails = () => {
         <ArrowLeft className="size-5" aria-hidden="true" /> Back to {category?.text || product.category}
       </Link>
 
-      <div className="mt-3 grid gap-6 rounded-[2rem] bg-white p-4 ring-1 ring-line sm:p-8 lg:grid-cols-2 lg:gap-12">
+      <div className="card-pop mt-3 grid gap-6 p-4 sm:p-8 lg:grid-cols-2 lg:gap-12">
         <div>
-          <div className="relative grid aspect-square place-items-center rounded-3xl" style={{ backgroundColor: categoryTint(product.category) }}>
+          <div className="relative grid aspect-square place-items-center rounded-[1.5rem] border-2 border-ink" style={{ backgroundColor: categoryTint(product.category) }}>
             {off > 0 && (
-              <span className="absolute left-4 top-4 rounded-full bg-accent px-4 py-1 text-lg font-extrabold text-white">{off}% off</span>
+              <span className="font-display absolute left-4 top-4 grid size-20 -rotate-12 place-items-center rounded-full border-2 border-ink bg-sun text-xl font-extrabold shadow-[0_3px_0_0_var(--color-ink)]">-{off}%</span>
             )}
             <img src={image} alt={product.name} className="size-[62%] object-contain mix-blend-multiply" />
           </div>
@@ -54,7 +54,7 @@ const ProductDetails = () => {
                   type="button"
                   onClick={() => setSelected(i)}
                   aria-label={`Show picture ${i + 1}`}
-                  className={`grid size-20 place-items-center rounded-xl bg-white ring-2 ${i === selected ? "ring-primary" : "ring-line"}`}
+                  className={`grid size-20 place-items-center rounded-2xl border-2 bg-white ${i === selected ? "border-ink" : "border-line"}`}
                 >
                   <img src={src} alt="" className="size-14 object-contain" />
                 </button>
@@ -69,7 +69,7 @@ const ProductDetails = () => {
           {product.unit && <p className="mt-2 text-xl font-semibold text-muted">{product.unit}</p>}
 
           <div className="mt-6 flex flex-wrap items-center gap-x-4 gap-y-2">
-            <span className="text-4xl font-extrabold">{formatPrice(product.offerPrice)}</span>
+            <span className="font-display text-5xl font-extrabold">{formatPrice(product.offerPrice)}</span>
             {off > 0 && (
               <>
                 <s className="text-xl text-muted">{formatPrice(product.price)}</s>
@@ -80,7 +80,7 @@ const ProductDetails = () => {
             )}
           </div>
 
-          <p className={`mt-4 flex items-center gap-2 text-lg font-bold ${product.inStock ? "text-primary" : "text-accent"}`}>
+          <p className={`mt-4 flex items-center gap-2 text-lg font-bold ${product.inStock ? "text-accent" : "text-primary"}`}>
             {product.inStock ? <><Check className="size-5" strokeWidth={3} aria-hidden="true" /> In stock</> : "Out of stock right now"}
           </p>
 
@@ -94,7 +94,7 @@ const ProductDetails = () => {
                   <button
                     type="button"
                     onClick={() => { navigate("/cart"); scrollTo(0, 0); }}
-                    className="flex h-14 flex-1 items-center justify-center gap-2 rounded-2xl bg-primary px-6 text-lg font-extrabold text-white hover:bg-primary-dull"
+                    className="btn btn-sun h-14 flex-1 px-6 text-lg"
                   >
                     <ShoppingBasket className="size-6" aria-hidden="true" /> Go to basket
                   </button>
@@ -103,7 +103,7 @@ const ProductDetails = () => {
                 <button
                   type="button"
                   onClick={() => addToCart(product._id)}
-                  className="flex h-14 flex-1 items-center justify-center gap-2 rounded-2xl bg-primary px-6 text-lg font-extrabold text-white shadow-lg shadow-primary/25 hover:bg-primary-dull"
+                  className="btn btn-sun h-14 flex-1 px-6 text-lg"
                 >
                   <ShoppingBasket className="size-6" aria-hidden="true" /> Add to basket
                 </button>
@@ -111,7 +111,7 @@ const ProductDetails = () => {
             </div>
           )}
 
-          <ul className="mt-6 space-y-3 rounded-2xl bg-canvas p-4 text-base">
+          <ul className="mt-6 space-y-3 rounded-2xl border-2 border-dashed border-ink/30 bg-sun-soft p-4 text-base font-semibold">
             <li className="flex items-start gap-3"><Truck className="mt-0.5 size-5 shrink-0 text-primary" aria-hidden="true" /> {STORE.deliveryPromise}</li>
             <li className="flex items-start gap-3"><Wallet className="mt-0.5 size-5 shrink-0 text-primary" aria-hidden="true" /> Pay when it arrives: cash or bank transfer</li>
           </ul>

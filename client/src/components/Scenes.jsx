@@ -33,7 +33,7 @@ const Photo = ({ src, alt, className = "" }) => (
 );
 
 const Chip = ({ icon, children, className }) => (
-  <div className={`absolute flex items-center gap-2 rounded-2xl bg-white/95 px-3 py-2 text-sm font-bold text-ink shadow-lg ring-1 ring-black/5 backdrop-blur ${className}`}>
+  <div className={`sticker absolute rounded-2xl px-3 py-2 text-sm text-ink ${className}`}>
     <img src={scene(icon)} alt="" aria-hidden="true" className="size-8" />
     <span className="leading-tight">{children}</span>
   </div>
@@ -41,13 +41,13 @@ const Chip = ({ icon, children, className }) => (
 
 export const HeroScene = () =>
   PHOTOS.hero ? (
-    <div className="mx-auto aspect-square w-full max-w-[520px] overflow-hidden rounded-[2rem]">
+    <div className="mx-auto aspect-square w-full max-w-[520px] overflow-hidden rounded-[2rem] border-2 border-ink">
       <Photo src={PHOTOS.hero} alt={`Shopping with ${STORE.name}`} />
     </div>
   ) : (
   <div className="relative mx-auto aspect-square w-full max-w-[520px]">
-    <div className="absolute inset-[4%] rounded-full bg-gradient-to-br from-[#dff3e5] via-[#eef8f0] to-[#fff4e0]" />
-    <div className="absolute inset-[18%] rounded-full bg-white/70" />
+    <div className="absolute inset-[4%] rounded-full border-2 border-ink bg-white" />
+    <div className="absolute inset-[16%] rounded-full border-2 border-dashed border-ink/25 bg-sun-soft" />
 
     <Layer src={scene("grandma")} className="left-[12%] top-[14%] w-[44%] drop-shadow-xl" />
 
@@ -61,13 +61,13 @@ export const HeroScene = () =>
     <Layer src={product("egg")} className="right-[14%] top-[10%] w-[10%] animate-float [animation-delay:-3s]" />
     <Layer src={product("chili")} className="right-[4%] top-[34%] w-[10%] animate-float [animation-delay:-4s]" />
 
-    <Chip icon="scooter" className="bottom-[12%] left-[2%] sm:left-[4%]">On its way<br />to your door</Chip>
-    <Chip icon="thumbs-up" className="right-[0%] top-[2%] sm:right-[2%]">Pay when<br />it arrives</Chip>
+    <Chip icon="scooter" className="bottom-[12%] left-[2%] -rotate-3 sm:left-[4%]">On its way<br />to your door</Chip>
+    <Chip icon="thumbs-up" className="right-[0%] top-[2%] rotate-3 sm:right-[2%]">Pay when<br />it arrives</Chip>
   </div>
   );
 
 const StepFrame = ({ tint, photo, alt, children }) => (
-  <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl" style={{ backgroundColor: tint }}>
+  <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl border-2 border-ink" style={{ backgroundColor: tint }}>
     {photo ? <Photo src={photo} alt={alt} /> : children}
   </div>
 );
@@ -101,7 +101,7 @@ export const StepDeliver = () => (
 
 // Customer paying the rider at her door: cash or transfer
 export const PayOnDeliveryScene = ({ compact = false }) => (
-  <div className={`relative w-full overflow-hidden rounded-3xl bg-gradient-to-br from-[#fff6e5] via-[#fdf1e7] to-[#eaf6ec] ${compact ? "aspect-[4/3]" : "aspect-[5/4]"}`}>
+  <div className={`relative w-full overflow-hidden rounded-3xl border-2 border-ink bg-sun-soft ${compact ? "aspect-[4/3]" : "aspect-[5/4]"}`}>
     {PHOTOS.payOnDelivery ? (
       <Photo src={PHOTOS.payOnDelivery} alt="A customer paying the delivery rider at her door" />
     ) : (
@@ -116,9 +116,9 @@ export const PayOnDeliveryScene = ({ compact = false }) => (
     <NairaNote className="absolute bottom-[40%] right-[34%] w-[24%] -rotate-12 drop-shadow-lg" />
     <NairaNote className="absolute bottom-[34%] right-[30%] w-[24%] rotate-6 drop-shadow-lg" value="500" />
     {!compact && (
-      <Chip icon="phone" className="left-[4%] top-[6%]">Or pay by<br />bank transfer</Chip>
+      <Chip icon="phone" className="left-[4%] top-[6%] -rotate-2">Or pay by<br />bank transfer</Chip>
     )}
-    <Chip icon="check" className="bottom-[4%] left-[40%]">Paid at<br />the door</Chip>
+    <Chip icon="check" className="bottom-[4%] left-[40%] rotate-2">Paid at<br />the door</Chip>
     </>
     )}
   </div>
@@ -133,7 +133,7 @@ export const StepPay = () => (
 );
 
 export const ShopScene = () => (
-  <div className="relative aspect-[4/3] w-full overflow-hidden rounded-3xl bg-gradient-to-br from-[#e7f5ea] to-[#fff4e2]">
+  <div className="relative aspect-[4/3] w-full overflow-hidden rounded-3xl border-2 border-ink bg-sun-soft">
     {PHOTOS.shop ? (
       <Photo src={PHOTOS.shop} alt={`Inside ${STORE.name}`} />
     ) : (

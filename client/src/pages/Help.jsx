@@ -29,27 +29,27 @@ const Help = () => (
       <p className="mt-2 max-w-2xl text-lg text-muted">Ordering from {STORE.name} takes about two minutes. Here is exactly what to do.</p>
       <ol className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {steps.map((step, i) => (
-          <li key={step.title} className="rounded-3xl bg-white p-4 ring-1 ring-line">
+          <li key={step.title} className="card-pop p-4">
             <step.Scene />
             <div className="mt-4 flex items-center gap-3">
-              <span className="grid size-10 shrink-0 place-items-center rounded-full bg-primary text-lg font-extrabold text-white">{i + 1}</span>
+              <span className="grid size-10 shrink-0 place-items-center rounded-full text-lg font-extrabold border-2 border-ink bg-sun text-ink">{i + 1}</span>
               <h2 className="text-xl font-extrabold leading-tight">{step.title}</h2>
             </div>
             <p className="mt-2 text-lg text-muted">{step.text}</p>
           </li>
         ))}
       </ol>
-      <Link to="/products" className="mt-8 inline-flex h-14 items-center rounded-2xl bg-primary px-8 text-lg font-extrabold text-white hover:bg-primary-dull">
+      <Link to="/products" className="btn btn-sun mt-8 h-14 px-8 text-lg">
         Start shopping
       </Link>
     </section>
 
     <section id="faq" className="scroll-mt-40">
       <h2 className="text-3xl font-extrabold tracking-tight">Questions & answers</h2>
-      <div className="mt-6 divide-y divide-line overflow-hidden rounded-3xl bg-white ring-1 ring-line">
+      <div className="card-pop mt-6 divide-y divide-line overflow-hidden">
         {faqs.map(([q, a]) => (
           <details key={q} className="group">
-            <summary className="flex min-h-16 cursor-pointer list-none items-center justify-between gap-4 px-5 py-4 text-lg font-extrabold hover:bg-primary-soft [&::-webkit-details-marker]:hidden">
+            <summary className="flex min-h-16 cursor-pointer list-none items-center justify-between gap-4 px-5 py-4 text-lg font-extrabold hover:bg-sun-soft [&::-webkit-details-marker]:hidden">
               {q}
               <ChevronDown className="size-6 shrink-0 text-primary transition group-open:rotate-180" aria-hidden="true" />
             </summary>

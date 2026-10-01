@@ -34,8 +34,8 @@ const ProductListing = ({ category }) => {
 
   const title = query ? `Results for “${query}”` : current ? current.text : category || "All products";
   const chip = (active) =>
-    `flex h-12 shrink-0 items-center gap-2 rounded-full px-4 font-bold whitespace-nowrap ring-1 transition ${
-      active ? "bg-primary text-white ring-primary" : "bg-white text-ink ring-line hover:ring-primary"
+    `flex h-12 shrink-0 items-center gap-2 rounded-full border-2 px-4 font-extrabold whitespace-nowrap transition ${
+      active ? "border-ink bg-ink text-sun" : "border-ink/25 bg-white text-ink hover:border-ink"
     }`;
 
   return (
@@ -77,7 +77,7 @@ const ProductListing = ({ category }) => {
           <button
             type="button"
             onClick={() => setParams({})}
-            className="min-h-12 rounded-xl px-4 font-bold text-primary ring-1 ring-primary/30 hover:bg-primary-soft"
+            className="btn btn-white min-h-12 px-4"
           >
             Clear search
           </button>
@@ -89,7 +89,7 @@ const ProductListing = ({ category }) => {
           <select
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value)}
-            className="h-12 rounded-xl bg-white px-3 font-semibold ring-1 ring-line outline-none focus:ring-2 focus:ring-primary"
+            className="h-12 rounded-full border-2 border-ink bg-white px-4 font-bold outline-none focus:ring-4 focus:ring-sun"
           >
             <option value="popular">Most popular</option>
             <option value="price-asc">Price: lowest first</option>
@@ -101,11 +101,11 @@ const ProductListing = ({ category }) => {
 
       <div className="mt-5">
         {!productsLoading && list.length === 0 ? (
-          <div className="rounded-3xl bg-white px-6 py-14 text-center ring-1 ring-line">
+          <div className="card-pop px-6 py-14 text-center">
             <img src="/images/scenes/magnifier.webp" alt="" className="mx-auto size-20" />
             <h2 className="mt-4 text-2xl font-extrabold">We couldn't find that</h2>
             <p className="mt-2 text-lg text-muted">Try a simpler word, like “rice” or “oil”, or call us and we will help.</p>
-            <Link to="/products" onClick={() => setParams({})} className="mt-6 inline-flex h-12 items-center rounded-xl bg-primary px-6 font-bold text-white">
+            <Link to="/products" onClick={() => setParams({})} className="btn btn-sun mt-6 h-12 px-6">
               See all products
             </Link>
           </div>
@@ -119,7 +119,7 @@ const ProductListing = ({ category }) => {
           <button
             type="button"
             onClick={() => setShown((n) => n + PAGE)}
-            className="h-14 rounded-2xl bg-white px-8 text-lg font-extrabold text-primary ring-2 ring-primary/30 hover:bg-primary-soft"
+            className="btn btn-white h-14 px-8 text-lg"
           >
             Show more products ({list.length - shown} left)
           </button>

@@ -11,10 +11,10 @@ const values = [
 
 const About = () => (
   <div className="space-y-14 pt-6 md:pt-10">
-    <section className="grid items-center gap-8 rounded-[2rem] bg-white p-6 ring-1 ring-line sm:p-10 lg:grid-cols-2">
+    <section className="card-pop grid items-center gap-8 p-6 sm:p-10 lg:grid-cols-2">
       <div>
-        <p className="font-extrabold uppercase tracking-widest text-primary">About us</p>
-        <h1 className="mt-2 text-3xl font-extrabold tracking-tight sm:text-5xl">Your neighbourhood shop, now at your door</h1>
+        <p className="sticker -rotate-2 bg-sun px-4 py-1">About us</p>
+        <h1 className="mt-4 text-4xl font-extrabold sm:text-5xl">Your neighbourhood shop, now at your door</h1>
         <p className="mt-4 text-lg text-muted">
           {STORE.name} is a neighbourhood grocery store in {STORE.city}. Our customers come in for rice, beans, fresh pepper,
           provisions and drinks. Now you can order the same things from home and we will bring them to you.
@@ -22,7 +22,7 @@ const About = () => (
         <p className="mt-4 text-lg text-muted">
           Busy with work, looking after children, or not able to go out easily? Order online, on the phone, or on WhatsApp, and pay when it arrives.
         </p>
-        <Link to="/products" className="mt-8 inline-flex h-14 items-center rounded-2xl bg-primary px-8 text-lg font-extrabold text-white hover:bg-primary-dull">
+        <Link to="/products" className="btn btn-sun mt-8 h-14 px-8 text-lg">
           Start shopping
         </Link>
       </div>
@@ -31,7 +31,7 @@ const About = () => (
 
     <section className="grid gap-4 md:grid-cols-3">
       {values.map((v) => (
-        <div key={v.title} className="rounded-3xl bg-white p-6 ring-1 ring-line">
+        <div key={v.title} className="card-pop p-6">
           <img src={`/images/scenes/${v.image}.webp`} alt="" className="size-16" />
           <h2 className="mt-4 text-2xl font-extrabold">{v.title}</h2>
           <p className="mt-2 text-lg text-muted">{v.text}</p>

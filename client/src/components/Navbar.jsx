@@ -1,6 +1,6 @@
 import { useEffect, useId, useRef, useState } from "react";
 import { Link, NavLink, useLocation, useSearchParams } from "react-router-dom";
-import { ALargeSmall, ChevronDown, ClipboardList, LogOut, Phone, Search, ShoppingBasket, Truck, User } from "lucide-react";
+import { ChevronDown, ClipboardList, LogOut, Phone, Search, ShoppingBasket, Truck, User, X } from "lucide-react";
 import toast from "react-hot-toast";
 import { useAppContext } from "../contex/AppContex";
 import { FREE_DELIVERY_FROM, STORE } from "../config/store";
@@ -31,8 +31,8 @@ export const SearchForm = ({ className = "", autoFocus = false }) => {
   };
 
   return (
-    <form onSubmit={submit} role="search" className={`flex h-12 items-center rounded-2xl bg-white ring-2 ring-line focus-within:ring-primary ${className}`}>
-      <Search className="ml-4 size-5 shrink-0 text-muted" aria-hidden="true" />
+    <form onSubmit={submit} role="search" className={`flex h-13 items-center rounded-full border-2 border-ink bg-white pl-1 focus-within:ring-4 focus-within:ring-sun ${className}`}>
+      <Search className="ml-4 size-5 shrink-0 text-ink" strokeWidth={2.5} aria-hidden="true" />
       <label htmlFor={inputId} className="sr-only">Search for a product</label>
       <input
         id={inputId}
@@ -43,7 +43,7 @@ export const SearchForm = ({ className = "", autoFocus = false }) => {
         placeholder="What do you need?"
         className="h-full min-w-0 flex-1 bg-transparent px-3 text-base outline-none placeholder:text-muted/80"
       />
-      <button type="submit" className="mr-1 h-10 rounded-xl bg-primary px-4 font-bold text-white hover:bg-primary-dull">
+      <button type="submit" className="mr-1 h-10 rounded-full bg-ink px-5 font-extrabold text-sun hover:bg-primary">
         Search
       </button>
     </form>
@@ -82,7 +82,7 @@ const AccountMenu = () => {
       <button
         type="button"
         onClick={() => setShowUserLogin(true)}
-        className="flex h-12 items-center gap-2 rounded-2xl px-4 font-bold text-ink ring-1 ring-line hover:bg-primary-soft"
+        className="btn btn-white h-12 px-4"
       >
         <User className="size-5" aria-hidden="true" />
         Sign in
@@ -96,20 +96,20 @@ const AccountMenu = () => {
         type="button"
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
-        className="flex h-12 items-center gap-2 rounded-2xl px-4 font-bold text-ink ring-1 ring-line hover:bg-primary-soft"
+        className="btn btn-white h-12 px-3"
       >
-        <span className="grid size-8 place-items-center rounded-full bg-primary text-sm text-white">
+        <span className="grid size-8 place-items-center rounded-full bg-sun text-sm ring-2 ring-ink">
           {user.name?.[0]?.toUpperCase() || "U"}
         </span>
         <span className="max-w-28 truncate">Hi, {user.name?.split(" ")[0]}</span>
         <ChevronDown className="size-4" aria-hidden="true" />
       </button>
       {open && (
-        <div className="absolute right-0 top-14 z-50 w-56 overflow-hidden rounded-2xl bg-white py-2 shadow-xl ring-1 ring-line">
-          <Link to="/my-orders" onClick={() => setOpen(false)} className="flex items-center gap-3 px-4 py-3 font-semibold hover:bg-primary-soft">
+        <div className="card-pop shadow-pop absolute right-0 top-16 z-50 w-56 overflow-hidden py-2">
+          <Link to="/my-orders" onClick={() => setOpen(false)} className="flex items-center gap-3 px-4 py-3 font-bold hover:bg-sun-soft">
             <ClipboardList className="size-5 text-primary" aria-hidden="true" /> My orders
           </Link>
-          <button type="button" onClick={logout} className="flex w-full items-center gap-3 px-4 py-3 text-left font-semibold hover:bg-primary-soft">
+          <button type="button" onClick={logout} className="flex w-full items-center gap-3 px-4 py-3 text-left font-bold hover:bg-sun-soft">
             <LogOut className="size-5 text-primary" aria-hidden="true" /> Sign out
           </button>
         </div>
@@ -118,36 +118,60 @@ const AccountMenu = () => {
   );
 };
 
+const STRIP_KEY = "topStripClosed";
+
+// Thin message bar above the header; the X hides it and it stays hidden on this device
+const TopStrip = () => {
+  const [closed, setClosed] = useState(() => {
+    try {
+      return localStorage.getItem(STRIP_KEY) === "1";
+    } catch {
+      return false;
+    }
+  });
+
+  if (closed) return null;
+
+  const close = () => {
+    setClosed(true);
+    try {
+      localStorage.setItem(STRIP_KEY, "1");
+    } catch {
+      // stays closed until the page reloads
+    }
+  };
+
+  return (
+    <div className="bg-ink text-sm text-sun-soft">
+      <div className="mx-auto flex max-w-7xl items-center gap-3 py-1.5 pl-4 pr-2 sm:pl-6 lg:pl-8">
+        <p className="flex min-w-0 flex-1 items-center gap-2 font-bold">
+          <Truck className="size-4 shrink-0 text-sun" aria-hidden="true" />
+          <span className="truncate">Free delivery on orders over {formatPrice(FREE_DELIVERY_FROM)}</span>
+        </p>
+        <a href={phoneLink()} className="hidden items-center gap-2 font-bold hover:text-sun md:flex">
+          <Phone className="size-4" aria-hidden="true" /> Call to order: {STORE.phoneDisplay}
+        </a>
+        <button
+          type="button"
+          onClick={close}
+          aria-label="Close this message"
+          className="grid size-9 shrink-0 place-items-center rounded-full hover:bg-white/15"
+        >
+          <X className="size-5" strokeWidth={2.5} aria-hidden="true" />
+        </button>
+      </div>
+    </div>
+  );
+};
+
 const Navbar = () => {
-  const { getCartCount, getCartTotalAmount, largeText, toggleLargeText } = useAppContext();
+  const { getCartCount, getCartTotalAmount } = useAppContext();
   const { pathname } = useLocation();
   const count = getCartCount();
 
   return (
-    <header className="sticky top-0 z-40 bg-white/95 shadow-[0_1px_0_#e2e6dd] backdrop-blur">
-      {/* Service strip */}
-      <div className="bg-primary-deep text-sm text-white">
-        <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-2 sm:px-6 lg:px-8">
-          <p className="flex items-center gap-2 font-semibold">
-            <Truck className="size-4 shrink-0" aria-hidden="true" />
-            <span>Free delivery on orders over {formatPrice(FREE_DELIVERY_FROM)}</span>
-          </p>
-          <div className="flex items-center gap-4">
-            <a href={phoneLink()} className="hidden items-center gap-2 font-semibold hover:underline md:flex">
-              <Phone className="size-4" aria-hidden="true" /> Call to order: {STORE.phoneDisplay}
-            </a>
-            <button
-              type="button"
-              onClick={toggleLargeText}
-              aria-pressed={largeText}
-              className="flex items-center gap-1.5 rounded-lg bg-white/10 px-2.5 py-1 font-bold hover:bg-white/20"
-            >
-              <ALargeSmall className="size-4" aria-hidden="true" />
-              {largeText ? "Normal text" : "Larger text"}
-            </button>
-          </div>
-        </div>
-      </div>
+    <header className="sticky top-0 z-40 border-b-2 border-ink bg-canvas">
+      <TopStrip />
 
       {/* Main bar */}
       <div className="mx-auto flex max-w-7xl items-center gap-4 px-4 py-3 sm:px-6 lg:px-8">
@@ -157,18 +181,15 @@ const Navbar = () => {
 
         <SearchForm className="mx-2 hidden flex-1 md:flex" />
 
-        <div className="ml-auto flex items-center gap-2">
+        <div className="ml-auto flex items-center gap-2.5">
           <div className="hidden md:block">
             <AccountMenu />
           </div>
-          <Link
-            to="/cart"
-            className="relative flex h-12 items-center gap-2 rounded-2xl bg-primary px-4 font-bold text-white hover:bg-primary-dull"
-          >
+          <Link to="/cart" className="btn btn-sun relative h-12 px-4">
             <ShoppingBasket className="size-6" aria-hidden="true" />
             <span className="hidden sm:inline">Basket</span>
             {count > 0 && <span className="hidden lg:inline">· {formatPrice(getCartTotalAmount())}</span>}
-            <span className="grid min-w-7 place-items-center rounded-full bg-white px-1.5 text-sm font-extrabold text-primary" aria-label={`${count} items`}>
+            <span className="grid min-w-7 place-items-center rounded-full bg-ink px-1.5 text-sm font-extrabold text-sun" aria-label={`${count} items`}>
               {count}
             </span>
           </Link>
@@ -183,16 +204,16 @@ const Navbar = () => {
       )}
 
       {/* Desktop links */}
-      <nav aria-label="Main" className="hidden border-t border-line md:block">
-        <ul className="no-scrollbar mx-auto flex max-w-7xl gap-1 overflow-x-auto px-4 sm:px-6 lg:px-8">
+      <nav aria-label="Main" className="hidden md:block">
+        <ul className="no-scrollbar mx-auto flex max-w-7xl gap-2 overflow-x-auto px-4 pb-3 sm:px-6 lg:px-8">
           {links.map((link) => (
             <li key={link.to}>
               <NavLink
                 to={link.to}
                 end={link.to === "/"}
                 className={({ isActive }) =>
-                  `block whitespace-nowrap border-b-4 px-3 py-3 font-bold transition ${
-                    isActive ? "border-primary text-primary" : "border-transparent text-ink hover:text-primary"
+                  `block whitespace-nowrap rounded-full border-2 px-4 py-1.5 font-extrabold transition ${
+                    isActive ? "border-ink bg-ink text-sun" : "border-transparent text-ink hover:border-ink hover:bg-white"
                   }`
                 }
               >

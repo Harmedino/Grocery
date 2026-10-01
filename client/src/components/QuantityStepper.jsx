@@ -6,19 +6,21 @@ const QuantityStepper = ({ product, size = "md" }) => {
   const { cartItems, addToCart, removeFromCart } = useAppContext();
   const quantity = cartItems[product._id] || 0;
   const box = size === "lg" ? "h-14" : "h-12";
-  const btn = size === "lg" ? "w-14" : "w-12";
+  const btn = size === "lg" ? "size-11" : "size-9";
+
+  const round = `grid ${btn} shrink-0 place-items-center rounded-full border-2 border-ink transition active:translate-y-0.5`;
 
   return (
-    <div className={`flex ${box} w-full items-center justify-between rounded-xl bg-primary-soft ring-1 ring-primary/20`}>
+    <div className={`flex ${box} w-full items-center justify-between rounded-2xl border-2 border-ink bg-sun-soft px-1`}>
       <button
         type="button"
         onClick={() => removeFromCart(product._id)}
         aria-label={`Remove one ${product.name}`}
-        className={`grid h-full ${btn} place-items-center rounded-l-xl text-primary-dull hover:bg-primary/10 active:bg-primary/20`}
+        className={`${round} bg-white hover:bg-primary-soft`}
       >
         <Minus className="size-5" strokeWidth={3} />
       </button>
-      <span className="text-lg font-extrabold tabular-nums" aria-live="polite">
+      <span className="font-display text-xl font-extrabold tabular-nums" aria-live="polite">
         {quantity}
         <span className="sr-only"> in basket</span>
       </span>
@@ -26,7 +28,7 @@ const QuantityStepper = ({ product, size = "md" }) => {
         type="button"
         onClick={() => addToCart(product._id)}
         aria-label={`Add one more ${product.name}`}
-        className={`grid h-full ${btn} place-items-center rounded-r-xl text-primary-dull hover:bg-primary/10 active:bg-primary/20`}
+        className={`${round} bg-sun hover:bg-[#ffd05a]`}
       >
         <Plus className="size-5" strokeWidth={3} />
       </button>

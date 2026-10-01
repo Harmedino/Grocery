@@ -63,9 +63,9 @@ const Newsletter = () => {
         value={email}
         onChange={(e) => setEmail(e.target.value)}
         placeholder="Your email address"
-        className="h-12 min-w-0 flex-1 rounded-xl bg-white/10 px-4 text-white outline-none ring-1 ring-white/20 placeholder:text-green-100/70 focus:ring-2 focus:ring-white"
+        className="h-12 min-w-0 flex-1 rounded-2xl border-2 border-sun-soft/40 bg-white/5 px-4 text-white outline-none placeholder:text-sun-soft/60 focus:border-sun"
       />
-      <button disabled={sending} className="h-12 rounded-xl bg-white px-5 font-bold text-primary-deep hover:bg-green-50 disabled:opacity-60">
+      <button disabled={sending} className="btn btn-sun h-12 px-5">
         {sending ? "Saving..." : "Get deals"}
       </button>
     </form>
@@ -73,11 +73,11 @@ const Newsletter = () => {
 };
 
 const Footer = () => (
-  <footer className="mt-16 bg-primary-deep text-green-50">
+  <footer className="mt-16 border-t-2 border-ink bg-ink text-sun-soft">
     <div className="mx-auto grid max-w-7xl gap-10 px-4 py-12 sm:px-6 md:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1.4fr] lg:px-8">
       <div>
         <Logo inverted />
-        <p className="mt-4 max-w-sm text-green-100">{STORE.tagline} Order online, by phone or on WhatsApp and pay when it arrives.</p>
+        <p className="mt-4 max-w-sm text-sun-soft/85">{STORE.tagline} Order online, by phone or on WhatsApp and pay when it arrives.</p>
         <ul className="mt-5 space-y-2.5">
           <li><a href={phoneLink()} className="flex items-center gap-3 hover:underline"><Phone className="size-5" aria-hidden="true" /> {STORE.phoneDisplay}</a></li>
           <li><a href={whatsappLink()} target="_blank" rel="noreferrer" className="flex items-center gap-3 hover:underline"><WhatsAppIcon className="size-5" /> WhatsApp us</a></li>
@@ -89,11 +89,11 @@ const Footer = () => (
 
       {columns.map((col) => (
         <div key={col.title}>
-          <h3 className="text-lg font-extrabold text-white">{col.title}</h3>
+          <h3 className="text-xl font-extrabold text-sun">{col.title}</h3>
           <ul className="mt-4 space-y-3">
             {col.links.map((link) => (
               <li key={link.text}>
-                <Link to={link.to} className="hover:underline">{link.text}</Link>
+                <Link to={link.to} className="font-semibold hover:text-sun hover:underline">{link.text}</Link>
               </li>
             ))}
           </ul>
@@ -101,13 +101,13 @@ const Footer = () => (
       ))}
 
       <div>
-        <h3 className="text-lg font-extrabold text-white">Weekly deals by email</h3>
-        <p className="mt-2 text-green-100">One short email a week with our best prices. No spam.</p>
+        <h3 className="text-xl font-extrabold text-sun">Weekly deals by email</h3>
+        <p className="mt-2 text-sun-soft/85">One short email a week with our best prices. No spam.</p>
         <Newsletter />
       </div>
     </div>
     <div className="border-t border-white/10">
-      <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-2 px-4 py-5 text-sm text-green-100 sm:flex-row sm:px-6 lg:px-8">
+      <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-2 px-4 py-5 text-sm text-sun-soft/80 sm:flex-row sm:px-6 lg:px-8">
         <p>© {new Date().getFullYear()} {STORE.name}. All rights reserved.</p>
         <Link to="/seller" className="font-semibold hover:underline">Store owner? Sign in here</Link>
       </div>
